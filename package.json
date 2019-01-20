@@ -1,20 +1,20 @@
 {
-  "name": "typescript-npm-package-starter",
-  "version": "1.0.0",
-  "description": "Boilerplate project to create npm package in typescript",
+  "name": "redux-retry",
+  "version": "0.0.1",
+  "description": "Redux retry for easy state management",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/timreynolds/typescript-npm-package-starter.git"
+    "url": "https://github.com/nimeshgurung/redux-retry.git"
   },
   "bugs": {
-    "url": "https://github.com/timreynolds/typescript-npm-package-starter/issues"
+    "url": "https://github.com/nimeshgurung/redux-retry.git/issues"
   },
-  "homepage": "https://github.com/timreynolds/typescript-npm-package-starter",
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
     "test": "jest",
+    "test:debug": "jest --env=jsdom --watch --verbose false --no-watchman --runInBand",
     "test:coverage": "jest --coverage",
     "lint": "tslint 'src/**/*.ts'",
     "prettier": "prettier --parser typescript --write '**/*.ts'",
@@ -22,21 +22,44 @@
     "postversion": "git push origin master --tags --no-verify",
     "preversion": "npm run unit && npm run build"
   },
-  "author": "Tim Reynolds",
+  "author": "Nimesh Gurung",
   "license": "MIT",
   "devDependencies": {
+    "@commercetools/enzyme-extensions": "^4.0.0",
+    "@types/enzyme": "^3.1.15",
     "@types/jest": "23.3.13",
     "@types/node": "10.12.18",
+    "@types/react": "^16.7.20",
+    "@types/react-redux": "^7.0.0",
+    "@types/redux": "^3.6.0",
+    "@types/redux-saga": "^0.10.5",
+    "@types/redux-thunk": "^2.1.0",
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
     "husky": "1.3.1",
     "jest": "23.6.0",
     "lint-staged": "8.1.0",
     "prettier": "1.16.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-redux": "^6.0.0",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0",
+    "redux-thunk": "^2.3.0",
     "rimraf": "2.6.3",
     "ts-jest": "23.1.4",
     "ts-node": "7.0.1",
     "tslint": "5.12.1",
     "tslint-config-prettier": "1.17.0",
+    "tslint-react": "^3.6.0",
     "typescript": "3.2.4"
+  },
+  "peerDependencies": {
+    "react": "^16.7.0",
+    "react-redux": "^6.0.0",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0",
+    "redux-thunk": "^2.3.0"
   },
   "lint-staged": {
     "*.ts": [
@@ -51,6 +74,9 @@
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}"
+    ],
+    "setupFiles": [
+      "<rootDir>/setupTest.js"
     ],
     "moduleFileExtensions": [
       "ts",
