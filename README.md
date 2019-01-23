@@ -3,6 +3,7 @@ Redux retry
 
 [![devDependency Status](https://david-dm.org/timreynolds/typescript-npm-package-starter/dev-status.svg)](https://david-dm.org/timreynolds/typescript-npm-package-starter#info=devDependencies)
 [![Build Status](https://travis-ci.com/nimeshgurung/redux-retry.svg?branch=master)](https://travis-ci.com/nimeshgurung/redux-retry)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/06a207879a7f0c4a2305/test_coverage)](https://codeclimate.com/github/nimeshgurung/redux-retry/test_coverage)
 
 Retry redux midllware functions with less hassle and ceremony. Currently supports only redux saga.
 
