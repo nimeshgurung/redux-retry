@@ -7,7 +7,6 @@
   "rules": {
     "object-literal-sort-keys": false,
     "no-implicit-dependencies": [true, "dev"],
-    "no-submodule-imports": false,
-    "jsx": true
+    "no-submodule-imports": false
   }
 }
