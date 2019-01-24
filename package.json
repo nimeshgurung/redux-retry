@@ -1,6 +1,6 @@
 {
   "name": "redux-retry",
-  "version": "0.0.1-rc1",
+  "version": "0.0.1-rc2",
   "description": "Redux retry for easy state management",
   "main": "dist/index.js",
   "repository": {
