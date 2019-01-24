@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { bindActionToPromise } from './utils';
+import { bindActionToPromise, retryRoot } from './utils';
 
 export type SagaFunction = (args?: any) => IterableIterator<any>;
 
@@ -127,3 +127,4 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
 }
 
 export default connect(null, dispatch => (dispatch))(Retry)
+export { retryRoot };
