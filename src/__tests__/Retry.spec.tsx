@@ -14,8 +14,7 @@ describe('Retry - Saga', () => {
     shallow(
       <Retry
         saga={{
-          call: saga,
-          args: []
+          call: saga
         }}
         dispatch={dispatchMock}
       >
@@ -32,13 +31,35 @@ describe('Retry - Saga', () => {
     });
   });
 
+  it('should make the api call on initial load with correct arguments for the saga', () => {
+    const dispatchMock = jest.fn();
+    shallow(
+      <Retry
+        saga={{
+          call: saga,
+          args: ['1']
+        }}
+        dispatch={dispatchMock}
+      >
+        {() => <div />}
+      </Retry>
+    );
+
+    expect(dispatchMock).toHaveBeenCalledWith({
+      type: actionTypes.RETRY,
+      saga,
+      args: ['1'],
+      resolve: expect.any(Function),
+      reject: expect.any(Function)
+    });
+  });
+
   it('should handle error state', done => {
     const dispatchMock = jest.fn();
     const wrapper = shallow(
       <Retry
         saga={{
-          call: saga,
-          args: []
+          call: saga
         }}
         dispatch={dispatchMock}
       >
@@ -63,8 +84,7 @@ describe('Retry - Saga', () => {
     const wrapper = shallow(
       <Retry
         saga={{
-          call: saga,
-          args: []
+          call: saga
         }}
         dispatch={dispatchMock}
       >
@@ -89,8 +109,7 @@ describe('Retry - Saga', () => {
     const wrapper = shallow(
       <Retry
         saga={{
-          call: saga,
-          args: []
+          call: saga
         }}
         dispatch={dispatchMock}
       >

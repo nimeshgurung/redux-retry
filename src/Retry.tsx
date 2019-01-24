@@ -21,7 +21,7 @@ export interface IRetryThunk {
 
 interface ISaga {
   call: SagaFunction;
-  args: any[];
+  args?: any[];
 }
 
 interface IRetryBaseProps {
@@ -42,14 +42,20 @@ interface IRetrySagaProps extends IRetryBaseProps {
 type RetryProps = IRetrySagaProps; // | IRetryThunkProps;
 
 export class Retry extends React.Component<RetryProps, IRetryState> {
-  public state = {
+  
+  private initialState = {
     retryAttempt: 0,
     error: false,
     success: false,
     exception: undefined,
     loading: true,
     response: undefined
-  };
+  }
+  
+  constructor(props: RetryProps) {
+    super(props);
+    this.state = {...this.initialState};
+  }
 
   public componentDidMount() {
     this.makeApiCall();
@@ -58,9 +64,7 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
   public retry = () => {
     this.setState(
       {
-        loading: true,
-        error: false,
-        success: false,
+        ...this.initialState,
         retryAttempt: this.state.retryAttempt + 1
       },
       () => this.makeApiCall()
@@ -75,7 +79,7 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
     return this.props.children(this.state, this.retry);
   }
 
-  private bindSagaToPromise = (call: SagaFunction, args: any[]) => {
+  private bindSagaToPromise = (call: SagaFunction, args: any[] = []) => {
     return bindActionToPromise(this.props.dispatch)(call, args);
   };
 
@@ -106,18 +110,17 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
       // }
 
       this.setState({
-        error: false,
+        ...this.initialState,
         loading: false,
         success: true,
         response
       });
     } catch (ex) {
       this.setState({
+        ...this.initialState,
         error: true,
         exception: ex,
-        loading: false,
-        success: false,
-        response: undefined
+        loading: false
       });
     }
   };
