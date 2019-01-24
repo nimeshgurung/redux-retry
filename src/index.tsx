@@ -44,7 +44,6 @@ type RetryProps = IRetrySagaProps; // | IRetryThunkProps;
 export class Retry extends React.Component<RetryProps, IRetryState> {
   
   private initialState = {
-    retryAttempt: 0,
     error: false,
     success: false,
     exception: undefined,
@@ -54,7 +53,7 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
   
   constructor(props: RetryProps) {
     super(props);
-    this.state = {...this.initialState};
+    this.state = {...this.initialState, retryAttempt: 0};
   }
 
   public componentDidMount() {
@@ -126,5 +125,5 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
   };
 }
 
-export default connect(null, dispatch => (dispatch))(Retry)
+export default connect(null, dispatch => ({dispatch}))(Retry)
 export { retryRoot };
