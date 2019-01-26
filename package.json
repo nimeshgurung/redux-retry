@@ -1,6 +1,6 @@
 {
   "name": "redux-retry",
-  "version": "0.0.1-rc7",
+  "version": "0.0.1-rc8",
   "description": "Redux retry for easy state management",
   "main": "dist/index.js",
   "repository": {
@@ -54,9 +54,6 @@
     "tslint-config-prettier": "1.17.0",
     "tslint-react": "^3.6.0",
     "typescript": "3.2.4"
-  },
-  "dependencies": {
-    "redux-saga": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^16.7.0",
