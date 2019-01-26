@@ -4143,9 +4143,9 @@ realpath-native@^1.0.0, realpath-native@^1.0.2:
   dependencies:
     util.promisify "^1.0.0"
 
-redux-retry@0.0.1-rc8:
-  version "0.0.1-rc8"
-  resolved "https://registry.yarnpkg.com/redux-retry/-/redux-retry-0.0.1-rc8.tgz#204cfb3082fc878d85a1a5e0f3ab9038e02ba822"
+redux-retry@0.0.1-rc9:
+  version "0.0.1-rc9"
+  resolved "https://registry.yarnpkg.com/redux-retry/-/redux-retry-0.0.1-rc9.tgz#7982b453e4e2912414ccaffc1cd5d138c5ecf30b"
 
 redux-saga@^1.0.0:
   version "1.0.0"

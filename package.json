@@ -1,7 +1,7 @@
 {
   "name": "redux-retry",
-  "version": "0.0.1-rc9",
-  "description": "Redux retry for easy state management",
+  "version": "0.0.1",
+  "description": "Redux retry for easy state management of async calls",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -85,5 +85,12 @@
       "js",
       "json"
     ]
-  }
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "react-redux",
+    "redux-saga",
+    "redux-retry"
+  ]
 }
