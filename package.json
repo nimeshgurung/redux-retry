@@ -78,6 +78,7 @@
     "setupFiles": [
       "<rootDir>/setupTest.js"
     ],
+    "modulePathIgnorePatterns": ["<rootDir>/demo"],
     "moduleFileExtensions": [
       "ts",
       "tsx",

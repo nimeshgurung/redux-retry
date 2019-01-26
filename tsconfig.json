@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "jsx": "react-native",
+    "jsx": "react",
     "module": "commonjs",
-    "lib": ["dom", "es2015", "es2016"],
+    "lib": ["es2015", "es2016"],
     "declaration": true,
     "sourceMap": true,
     "outDir": "./dist",
