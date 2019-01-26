@@ -1,6 +1,6 @@
 {
   "name": "redux-retry",
-  "version": "0.0.1-rc5",
+  "version": "0.0.1-rc6",
   "description": "Redux retry for easy state management",
   "main": "dist/index.js",
   "repository": {
@@ -59,7 +59,8 @@
     "react": "^16.7.0",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "redux-saga": "^1.0.0"
   },
   "lint-staged": {
     "*.ts": [

@@ -6,58 +6,109 @@ Redux retry
 [![Test Coverage](https://api.codeclimate.com/v1/badges/06a207879a7f0c4a2305/test_coverage)](https://codeclimate.com/github/nimeshgurung/redux-retry/test_coverage)
 
 Retry redux midllware functions with less hassle and ceremony. Currently supports only redux saga.
-
-## Motivation behind the component
-In the redux ecosytem when making async request the code goes through this whole tedious process or cycle of tying up the loading state, success state and error state with the redux store. Then we funnel it down with props to the components where we require them. This starts becoming really tedious after a while in a project when you try to hook the store, actions and components together and you just want to get stuff done without all the ceremony.
-
-If the requirements also asks for the user to be able to retry the failed requests and if you need maintain UI behaviour depending on the retry counts, then the sagas or thunks start looking muddled,and the mental model of what is happening where becomes confusing, especially in large scale project.
  
 ## Redux retry in a nutshell
-Redux retry is just a simple component, which calls the redux middleware functions, and maintains the loading, success or failure state of the middleware functions `[support for redux thunk is not added yet, only redux saga is currently supported]`. In a nutshell all it does is brings a lot of stuff that deals with making api request via the middleware function and the maintenance of state around it away from the redux store, brings it inline in inside the component.
+Redux retry is a simple component, which calls the redux middleware functions, and maintains the loading, success or failure state of the middleware functions `[support for redux thunk is not added yet, only redux saga is currently supported]`. In a nutshell all it does is brings a lot of stuff that deals with making api request via the middleware functions and the maintenance of state around it away from the redux store, and brings it inline inside the component itself for easy state management.
 
 ### Example:
 
 ```tsx
-import { call } from 'redux-saga/effects';
+import React from "react";
+import { render } from "react-dom";
+import { Provider } from "react-redux";
+import { createStore, applyMiddleware, compose } from "redux";
+import createSagaMiddleware from "redux-saga";
+import { call, all } from "redux-saga/effects";
+import Retry, { retryRoot } from "redux-retry";
+const initialState = {};
 
-function *todoSaga(id) {
-  const response = yield call(fetch, `http://api.todos.com/todos/${id}`);
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};
 
-  const todo = response.json()
+const getCatFacts = function*(id) {
+  const response = yield call(
+    fetch,
+    "https://cors-anywhere.herokuapp.com/https://cat-fact.herokuapp.com/facts/" +
+      id
+  );
+  return yield response.json();
+};
 
-  // you can update the store if you would like to
-  yield put({ action: 'UPDATE_TODO', todo})
+const root = function*() {
+  // This part is important for redux-retry to be able to hook into the redux-saga ecosystem of your app
+  yield all([retryRoot()]);
+};
 
-  return todo.
-}
+const sagaMiddleware = createSagaMiddleware();
+const store = createStore(reducer, compose(applyMiddleware(sagaMiddleware)));
+sagaMiddleware.run(root);
 
-class Todo extends React.Component {
+export default class RetryExample extends React.Component {
   render() {
     return (
-      <Retry saga={{ call: todoSaga, args: ['id']}}>
-        {({retryState, retry}) => {
+      <Retry saga={{ call: getCatFacts, args: ["5887e1d85c873e0011036889"] }}>
+        {(retryState, retry) => {
           if (retryState.loading) {
-            return (<p>Loading...</p>)
+            return <p>...Loading</p>;
+          }
+
+          if (retryState.success) {
+            return (
+              <div>
+                <div>{retryState.retryAttempt}</div>
+                <p>{retryState.response.text}</p>
+                <button type="button" onClick={retry}>
+                  Retry
+                </button>
+              </div>
+            );
           }
 
           if (retryState.error) {
             return (
-              <p>
-                {retryState.exception}
-                <button onClick={retry}>Retry</button>
-              </p>
-            )
+              <div>
+                <div>Error</div>
+                <div>{retryState.retryAttempt}</div>
+                <button type="button" onClick={retry}>
+                  Retry
+                </button>
+              </div>
+            );
           }
-
-          if (retryState.success) {
-            return (<p>{retryState.response.todo.name}</p>)
-          }
+          return null;
         }}
       </Retry>
-    )
+    );
   }
 }
+
+const App = () => (
+  <Provider store={store}>
+    <RetryExample />
+  </Provider>
+);
+
+render(<App />, document.getElementById("root"));
 ```
+
+Example link: https://codesandbox.io/s/04w2m9kw00
+
+### RetryRoot
+
+```typescript
+import { retryRoot } from 'redux-retry';
+
+export function* rootSaga() {
+  yield all([retryRoot()])
+}
+```
+
+Retryroot is a helper function that is exposed by `redux-rery` that allows the `Retry` component to be able to hook into the redux ecosystem of your app. Without hooking the `retryRoot` to your applications root saga, the `Retry` component won't be able to make the saga calls.
+
 
 ### Saga prop
 
@@ -72,7 +123,7 @@ Example 1:
 ```
 
 
-The value of the call is the actual saga you want to be called, args is the arguments you want to be applied to the saga.
+The value of the call is the actual saga you want to be called when the component mounts, args is the list of arguments you want to be applied to the saga when the retry component calls the saga.
 
 
 Example 2: 
@@ -98,45 +149,45 @@ In this above scenario it will call the sagas just like `Promise.all`. If any on
 
 The childern prop is something that is provided to the Retry component by the consumer of the component.
 
-Example
-
-
+Example:
 ```tsx
 <Retry saga={{call: saga, args:[1, 2]}}>
     {(retryState, retry) => {
-    <React.Fragment>
-      <div>{retrsyState.retryAttempt}</div>
-      <button onClick={retry}>Retry</button>
-      <div>{retryState.response}</div>
-    </React.Fragment>
+     return (
+       <React.Fragment>
+        <div>{retrsyState.retryAttempt}</div>
+        <button onClick={retry}>Retry</button>
+        <div>{retryState.response}</div>
+      </React.Fragment>
+      );
     }}
 </Retry>
 ```
 
-In return the Retry component calls the children prop with two arguments the `retryState` and the `retry` function.
+In return the Retry component calls the children prop with two arguments, the `retryState` and the `retry` function.
 
 #### RetryState
 
-The retry state is an represenstation of the state of the retry component internally and is exposed to the consumer. It provides the following attributes. It is in typescript but I the general gist of what type of value is provided is obvious looking at the code.
+The retry state is a represenstation of the state of the retry component internally and is exposed to the consumer. It provides the following attributes. 
 
 ```typescript
   interface IRetryState {
-    retryAttempt: number;
-    error: boolean;
-    exception: unknown; 
-    success: boolean;
-    loading: boolean;
-    response: unknown;
+    retryAttempt: number; // the number of retry attempts
+    error: boolean; // true when saga throws an error
+    exception: unknown; // The exception that was thrown
+    success: boolean; // true when request was successful
+    loading: boolean; // true when request is in flight
+    response: unknown; // reponse returned from the saga
   }
 ```
 
 If an error happens the `error` flag is set to true however the actual exception is provided in the `exception` attribute.
 
-In the same way if the `success` request was successful the `success` flag is turned true but the actual `response` again is provided in the `response` attribute.
+In the same way if the request was successful the `success` flag is turned true but the actual `response` again is provided in the `response` attribute.
 
-If the saga is still in operation and hasn't finished processing yet the `loading` flag will be set to true.
+If the saga is still in operation and hasn't finished processing yet, the `loading` flag will be set to true.
 
-The `retryAttempt` attribute simply gives the count of how many times the saga has been retried.
+The `retryAttempt` attribute simply gives the count of how many times the saga has been retried. Everytime any one of the state changes the `Retry` component internally calls `setState` which in turn re-renders the children of `Retry` component with appropriate state.
 
 
 #### Retry function
@@ -147,4 +198,10 @@ The retry function get's passed in as a second argument to the children prop fun
 #### When does the Retry component call the redux middleware or the async function?
 
 The provided redux middleware function or the async request is called by the `Retry` after the component is mounted in `componentDidMount`. The retry component does not retry the provided middleware or async request when any prop update happens to prop passed to the retry component. 
+
+
+## Motivation behind the component
+Not everything should be stored in redux store. `Loading`, `Success`, `Error` these are all normally the state we have to manage for any outgoing api calls. Most of the time we only care about tiny part of the response that we want to store. Maintaining loading, success and error scenario for each and every api calls is a bit of overkill and is a mental overhead that if can be avoided makes life simpler. Bringing the maintainance of these state inline seems to fare a lot better, leaving redux to be used only when absolutely necessary.
+
+Also if you ever have had requirements to handle, retrying of requests, maintaining all that state in redux store, actions, props and dispatches becomes a mess that is hard to maintain.
 
