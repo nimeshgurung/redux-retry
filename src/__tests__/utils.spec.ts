@@ -1,6 +1,6 @@
-import { handleRetry } from '../utils';
+import { handleRetry, handleThunkRetry } from '../utils';
 
-describe('#Utils', () => {
+describe('#Utils - handleRetry', () => {
   it('should call resolve if the saga resolves', () => {
     const mockAction = {
       saga: jest.fn(() => true),
@@ -50,188 +50,209 @@ describe('#Utils', () => {
 
     expect(mockAction.reject).toHaveBeenCalled();
   });
+});
 
-  // TODO: Uncomment when support for thunk is added
-  // it('should call the thunk with dispatch and getState', () => {
-  //   const mockFunction = jest.fn();
-  //   const call = () => mockFunction;
+describe('Utils - HandleThunkRetry', () => {
+  it('should call the thunk', async () => {
+    const dispatchMock = jest.fn();
+    const getStateMock = jest.fn(() => ({state: 'state'}));
+    const resolveMock = jest.fn();
+    const call = (id) => {
+      return (dispatch, getState) => {
+        const resp = getState().state + id;
+        dispatch(resp);
+        return Promise.resolve(resp);
+      }
+    }
 
-  //   handleThunk({
-  //     call,
-  //     args: [1, 2]
-  //   });
+    await handleThunkRetry({
+      thunk: {
+        call,
+        args: ['_mock_id']
+      },
+      resolve: resolveMock,
+      reject: jest.fn()
+    })(dispatchMock, getStateMock);
 
-  //   expect(mockFunction).toHaveBeenCalledWith(
-  //     singleton.dispatch,
-  //     singleton.getState
-  //   );
-  // });
+    expect(dispatchMock).toHaveBeenCalledWith('state_mock_id')
+    expect(resolveMock).toHaveBeenCalledWith('state_mock_id');
+  });
 
-  // TODO: Fix thunks later
-  // it('should call the thunk with the correct parameters', () => {
-  //   const call = jest.fn(() => jest.fn());
-  //   handleThunk({
-  //     call,
-  //     args: [1, 2]
-  //   });
+  it('should handle multiple thunks', async () => {
+    const dispatchMock = jest.fn();
+    const getStateMock = jest.fn(() => ({state: 'state'}));
+    const resolveMock = jest.fn();
+    const call = (arg1, arg2) => {
+      return (dispatch, getState) => {
+        const resp = getState().state + arg1 + arg2;
+        dispatch(resp);
+        return Promise.resolve(resp);
+      }
+    };
 
-  //   expect(call).toHaveBeenCalledWith(1, 2);
-  // });
+    const thunk = [
+      {
+        call,
+        args: [1, 2]
+      },
+      {
+        call,
+        args: [3, 4]
+      }
+    ];
 
-  // it('should handle multiple thunks', async () => {
-  //   const call1 = jest.fn(() => jest.fn());
-  //   const call2 = jest.fn(() => jest.fn());
+    await handleThunkRetry({
+      thunk,
+      resolve: resolveMock,
+      reject: jest.fn()
+    })(dispatchMock, getStateMock);
 
-  //   const call = [
-  //     {
-  //       call: call1,
-  //       args: [1, 2]
-  //     },
-  //     {
-  //       call: call2,
-  //       args: [3, 4]
-  //     }
-  //   ];
+    expect(dispatchMock).toHaveBeenCalledWith('state12');
+    expect(dispatchMock).toHaveBeenCalledWith('state34');
+    expect(resolveMock).toHaveBeenCalledWith(['state12', 'state34'])
+  });
 
-  //   await handleThunk(call);
+  it('should wait for the thunk to resolve', async () => {
+    const dispatchMock = jest.fn();
+    const getStateMock = jest.fn(() => ({state: 'state'}));
+    const resolveMock = jest.fn();
+    
+    const call1 = (arg: string) => (dispatch: any) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          dispatch(arg);
+          resolve(arg);
+        }, 100);
+      });
+    };
 
-  //   expect(call1).toHaveBeenCalledWith(1, 2);
-  //   expect(call2).toHaveBeenCalledWith(3, 4);
-  // });
+    await handleThunkRetry({
+      thunk : {
+        call: call1,
+        args: ['yo']
+      },
+      resolve: resolveMock,
+      reject: jest.fn()
+    })(dispatchMock, getStateMock);
 
-  // it('should call the thunks return function with the distpatch and get state function', async () => {
-  //   const mockThunk1 = jest.fn();
-  //   const mockThunk2 = jest.fn();
-  //   const call1 = () => mockThunk1;
-  //   const call2 = () => mockThunk2;
+    expect(dispatchMock).toHaveBeenCalledWith('yo');
+    expect(resolveMock).toHaveBeenCalledWith('yo');
+  });
 
-  //   const call = [
-  //     {
-  //       call: call1,
-  //       args: [1, 2]
-  //     },
-  //     {
-  //       call: call2,
-  //       args: [3, 4]
-  //     }
-  //   ];
+  it('should wait for multiple promises to resolve', async () => {
+    const dispatchMock = jest.fn();
+    const getStateMock = jest.fn(() => ({state: 'state'}));
+    const resolveMock = jest.fn();
+    const call1 = (arg: string) => (dispatch: any) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          dispatch(arg);
+          resolve();
+        }, 100);
+      });
+    };
 
-  //   await handleThunk(call);
+    const call2 = (arg: string) => (dispatch: any) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          dispatch(arg);
+          resolve();
+        }, 200);
+      });
+    };
 
-  //   expect(mockThunk1).toHaveBeenCalledWith(
-  //     singleton.dispatch,
-  //     singleton.getState
-  //   );
-  //   expect(mockThunk2).toHaveBeenCalledWith(
-  //     singleton.dispatch,
-  //     singleton.getState
-  //   );
-  // });
+    await handleThunkRetry({
+      thunk: [
+        {
+          call: call1,
+          args: ['pop']
+        },
+        {
+          call: call2,
+          args: ['rock']
+        }
+      ],
+      resolve: resolveMock,
+      reject: jest.fn()
+    })(dispatchMock, getStateMock);
 
-  // it('should wait for the thunk to resolve', async () => {
-  //   const call1 = (arg: string) => (dispatch: any) => {
-  //     return new Promise((resolve, reject) => {
-  //       setTimeout(() => {
-  //         dispatch(arg);
-  //         resolve();
-  //       }, 100);
-  //     });
-  //   };
+    
+    expect(dispatchMock).toHaveBeenCalledWith('pop');
+    expect(dispatchMock).toHaveBeenCalledWith('rock');
+  });
 
-  //   await handleThunk({
-  //     call: call1,
-  //     args: ['yo']
-  //   });
+  it('should throw an error if the thunk throws an error', async () => {
+    const dispatchMock = jest.fn();
+    const getStateMock = jest.fn(() => ({state: 'state'}));
+    const resolveMock = jest.fn();
+    
+    const call1 = (arg: string) => (dispatch: any) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          dispatch(arg);
+          reject('error');
+        }, 100);
+      });
+    };
 
-  //   expect(singleton.dispatch).toHaveBeenCalledWith('yo');
-  // });
+    try {
+      await handleThunkRetry({
+        thunk : {
+          call: call1,
+          args: ['yo']
+        },
+        resolve: resolveMock,
+        reject: (error) => { throw error }
+      })(dispatchMock, getStateMock);
 
-  // it('should wait for multiple promises to resolve', async () => {
-  //   const call1 = (arg: string) => (dispatch: any) => {
-  //     return new Promise((resolve, reject) => {
-  //       setTimeout(() => {
-  //         dispatch(arg);
-  //         resolve();
-  //       }, 100);
-  //     });
-  //   };
+      fail('Expected to throw an error');
+    } catch(ex) {
+      expect(ex).toBe('error');
+    }
+  });
 
-  //   const call2 = (arg: string) => (dispatch: any) => {
-  //     return new Promise((resolve, reject) => {
-  //       setTimeout(() => {
-  //         dispatch(arg);
-  //         resolve();
-  //       }, 200);
-  //     });
-  //   };
+  it('should wait for multiple promises to resolve', async () => {
+    const dispatchMock = jest.fn();
+    const getStateMock = jest.fn(() => ({state: 'state'}));
+    const resolveMock = jest.fn();
+    const call1 = (arg: string) => (dispatch: any) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          dispatch(arg);
+          resolve();
+        }, 100);
+      });
+    };
 
-  //   await handleThunk([
-  //     {
-  //       call: call1,
-  //       args: ['pop']
-  //     },
-  //     {
-  //       call: call2,
-  //       args: ['rock']
-  //     }
-  //   ]);
+    const call2 = (arg: string) => (dispatch: any) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          dispatch(arg);
+          reject('error');
+        }, 200);
+      });
+    };
 
-  //   expect(singleton.dispatch).toHaveBeenCalledWith('pop');
-  //   expect(singleton.dispatch).toHaveBeenCalledWith('rock');
-  // });
+    try {
 
-  // it('should throw an error if the thunk throws an error', async () => {
-  //   try {
-  //     const call = (arg: string) => (dispatch: any) => {
-  //       return new Promise((resolve, reject) => {
-  //         setTimeout(() => {
-  //           dispatch(arg);
-  //           reject('yo');
-  //         }, 100);
-  //       });
-  //     };
+      await handleThunkRetry({
+        thunk: [
+          {
+            call: call1,
+            args: ['pop']
+          },
+          {
+            call: call2,
+            args: ['rock']
+          }
+        ],
+        resolve: resolveMock,
+        reject: (error) => { throw error }
+      })(dispatchMock, getStateMock);
 
-  //     await handleThunk({
-  //       call,
-  //       args: [1, 2]
-  //     });
-  //   } catch (ex) {
-  //     expect(ex).toBe('yo');
-  //   }
-  // });
-
-  // it('should throw an error if any one of the promises throws an error', async () => {
-  //   try {
-  //     const call1 = (arg: string) => (dispatch: any) => {
-  //       return new Promise((resolve, reject) => {
-  //         setTimeout(() => {
-  //           dispatch(arg);
-  //           resolve();
-  //         }, 100);
-  //       });
-  //     };
-
-  //     const call2 = (arg: string) => (dispatch: any) => {
-  //       return new Promise((resolve, reject) => {
-  //         setTimeout(() => {
-  //           dispatch(arg);
-  //           reject('call2');
-  //         }, 200);
-  //       });
-  //     };
-
-  //     await handleThunk([
-  //       {
-  //         call: call1,
-  //         args: ['pop']
-  //       },
-  //       {
-  //         call: call2,
-  //         args: ['rock']
-  //       }
-  //     ]);
-  //   } catch (ex) {
-  //     expect(ex).toBe('call2');
-  //   }
-  // });
+      fail('Expected to throw an error');
+    } catch(ex) {
+      expect(ex).toBe('error');
+    }
+  });
 });

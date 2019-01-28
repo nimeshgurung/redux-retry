@@ -3,6 +3,7 @@ import { all, apply, takeEvery } from 'redux-saga/effects';
 
 const namespace = 'REDUX__RETRY__ACTION__';
 const namespacedAction = `${namespace}HANDLE/RETRY`;
+const namespacedActionThunk = `${namespace}HANDLE/THUNK/RETRY`;
 
 export const bindActionToPromise = (dispatch: Dispatch<any>) => (
   saga: () => IterableIterator<any>,
@@ -19,8 +20,25 @@ export const bindActionToPromise = (dispatch: Dispatch<any>) => (
   })
 };
 
+export const bindThunkToPromise = (dispatch: Dispatch<any>) => (
+  thunk: any
+) => {
+  return new Promise((resolve, reject) => {
+    return dispatch(handleThunkRetry(
+      {
+        type: actionTypes.RETRY_THUNK,
+        thunk,
+        resolve,
+        reject
+      })
+    );
+  })
+};
+
+
 export const actionTypes = {
-  RETRY: namespacedAction
+  RETRY: namespacedAction,
+  RETRY_THUNK: namespacedActionThunk
 };
 
 export function* handleRetry(action: any) {
@@ -34,21 +52,21 @@ export function* handleRetry(action: any) {
   }
 }
 
-// TODO: Add support for redux thunk at some point
-
-// export async function handleThunk(thunk: IRetryThunk | IRetryThunk[]) {
-//   const dispatch = singleton.dispatch;
-//   const getState = singleton.getState;
-//   if (Array.isArray(thunk)) {
-//     return Promise.all(
-//       thunk.map(item => {
-//         return item.call.apply(null, item.args)(dispatch, getState);
-//       })
-//     );
-//   } else {
-//     return thunk.call.apply(null, thunk.args)(dispatch, getState);
-//   }
-// }
+export function handleThunkRetry(action: any) {
+  const { thunk, resolve, reject } = action;
+  return (dispatch: Dispatch<any>, getState: () => any) => {
+    if (Array.isArray(thunk)) {
+      return Promise.all(
+        thunk.map(item => {
+          return item.call.apply(null, item.args)(dispatch, getState);
+        })
+      ).then(resolve).catch(reject);
+    } else {
+      return thunk.call.apply(null, thunk.args)(dispatch, getState)
+        .then(resolve).catch(reject)
+    }
+  }
+}
 
 export function* retryRoot() {
   yield all([takeEvery(actionTypes.RETRY, handleRetry)]);
