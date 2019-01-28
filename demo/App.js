@@ -54,7 +54,7 @@ class RetryExample extends React.Component {
           if (retryState.error) {
             return (
               <View style={styles.container}>
-                <Text>{retryState.exception}</Text>
+                <Text>{retryState.exception.message}</Text>
                 <Text>{retryState.retryAttempt}</Text>
                 <Button title={'Retry'} onPress={retry} />
               </View>

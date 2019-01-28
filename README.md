@@ -3,12 +3,11 @@ Redux retry
 [![Build Status](https://travis-ci.com/nimeshgurung/redux-retry.svg?branch=master)](https://travis-ci.com/nimeshgurung/redux-retry)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/06a207879a7f0c4a2305/test_coverage)](https://codeclimate.com/github/nimeshgurung/redux-retry/test_coverage)
 
-Retry redux midllware functions with less hassle and ceremony. Currently supports only redux saga.
- 
-## Redux retry in a nutshell
-Redux retry is a simple component, which calls the redux middleware functions, and maintains the loading, success or failure state of the middleware functions `[support for redux thunk is not added yet, only redux saga is currently supported]`. In a nutshell all it does is brings a lot of stuff that deals with making api request via the middleware functions and the maintenance of state around it away from the redux store, and brings it inline inside the component itself for easy state management.
 
-### Example:
+## Redux retry in a nutshell
+Redux retry is a simple component, which calls the redux middleware functions, and maintains the loading, success or failure state of the middleware functions. In a nutshell all it does is brings a lot of stuff that deals with making api request via the middleware functions and the maintenance of state around it away from the redux store, and brings it inline inside the component itself, for easy state management.
+
+#### Example:
 
 ```tsx
 import React from "react";
@@ -37,7 +36,8 @@ const getCatFacts = function*(id) {
 };
 
 const root = function*() {
-  // This part is important for redux-retry to be able to hook into the redux-saga ecosystem of your app
+  // This part is important for redux-retry to be able 
+  // to hook into the redux-saga ecosystem of your app
   yield all([retryRoot()]);
 };
 
@@ -93,9 +93,11 @@ const App = () => (
 render(<App />, document.getElementById("root"));
 ```
 
-Example link: https://codesandbox.io/s/04w2m9kw00
+Example link redux saga: https://codesandbox.io/s/04w2m9kw00
 
-### RetryRoot
+Example link redux thunk: https://codesandbox.io/s/9lz0kv4xo4
+
+#### RetryRoot - [only required for redux saga]
 
 ```typescript
 import { retryRoot } from 'redux-retry';
@@ -105,14 +107,14 @@ export function* rootSaga() {
 }
 ```
 
-Retryroot is a helper function that is exposed by `redux-rery` that allows the `Retry` component to be able to hook into the redux ecosystem of your app. Without hooking the `retryRoot` to your applications root saga, the `Retry` component won't be able to make the saga calls.
+Retryroot is a helper function that is exposed by `redux-rery` that allows the `Retry` component to be able to hook into the redux ecosystem of your app. Without hooking the `retryRoot` to your applications root saga, the `Retry` component won't be able to make the saga calls. This is not necessary if you want to only use `thunks` with `redux-retry`.
 
 
-### Saga prop
+#### Passing middleware functions to redux-retry
 
-When you provide saga as a prop it expects either an `object` or an `array`.
+When you provide `saga` or a `thunk` as a prop it expects either an `object` or an `array`.
 
-Example 1:
+Example usage with saga:
 
 ```tsx
   <Retry saga={{ call: saga, args:[arg1, arg2]}} >
@@ -120,11 +122,19 @@ Example 1:
   </Retry>
 ```
 
+Exmaple usage with thunk:
+```tsx
+  <Retry thunk={{ call: thunk, args:[arg1, arg2]}} >
+     {(retryState, retry) => null}
+  </Retry>
+```
 
-The value of the call is the actual saga you want to be called when the component mounts, args is the list of arguments you want to be applied to the saga when the retry component calls the saga.
 
 
-Example 2: 
+The value of the call is the actual `saga` ort `thunk` you want to be called when the component mounts, args is the list of arguments you want to be applied to the middleware function when the retry component calls the middleware function.
+
+
+Example usage with multiple saga: 
 
 ```tsx
   <Retry saga = {[
@@ -141,7 +151,23 @@ Example 2:
   </Retry>
 ```
 
-In this above scenario it will call the sagas just like `Promise.all`. If any one of the requests fails it will result in failed state.
+Example usage with multiple thunks:
+```tsx
+  <Retry thunk = {[
+          {
+            call: thunk1,
+            args: [arg1, arg2]
+          },
+          {
+            call: thunk2,
+            args: [arg3, arg4]
+          }
+        ]} >
+    {(retryState, retry) => null}
+  </Retry>
+```
+
+In this above scenario it will call all middleware functions just like `Promise.all`. If any one of the requests fails it will result in failed state.
 
 #### Children prop
 
@@ -149,7 +175,7 @@ The childern prop is something that is provided to the Retry component by the co
 
 Example:
 ```tsx
-<Retry saga={{call: saga, args:[1, 2]}}>
+<Retry thunk={{call: thunk, args:[1, 2]}}>
     {(retryState, retry) => {
      return (
        <React.Fragment>
@@ -195,7 +221,7 @@ The retry function get's passed in as a second argument to the children prop fun
 
 #### When does the Retry component call the redux middleware or the async function?
 
-The provided redux middleware function or the async request is called by the `Retry` after the component is mounted in `componentDidMount`. The retry component does not retry the provided middleware or async request when any prop update happens to prop passed to the retry component. 
+The provided redux middleware function is called by the `Retry` after it is mounted in `componentDidMount`. The retry component does not retry the middleware functions, on prop updates.
 
 
 ## Motivation behind the component

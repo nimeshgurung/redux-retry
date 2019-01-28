@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { bindActionToPromise, retryRoot } from './utils';
+import { bindActionToPromise, bindThunkToPromise, retryRoot } from './utils';
 
 export type SagaFunction = (args?: any) => IterableIterator<any>;
 
@@ -30,16 +30,15 @@ interface IRetryBaseProps {
   children(state: IRetryState, retry: () => void): React.ReactNode;
 }
 
-// TODO: Add support for redux thunk later
-// interface IRetryThunkProps extends IRetryBaseProps {
-//   thunk: IRetryThunk | IRetryThunk[];
-// }
+interface IRetryThunkProps extends IRetryBaseProps {
+  thunk: IRetryThunk | IRetryThunk[];
+}
 
 interface IRetrySagaProps extends IRetryBaseProps {
   saga: ISaga | ISaga[];
 }
 
-type RetryProps = IRetrySagaProps; // | IRetryThunkProps;
+type RetryProps = IRetrySagaProps | IRetryThunkProps;
 
 export class Retry extends React.Component<RetryProps, IRetryState> {
   
@@ -103,10 +102,9 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
         response = await this.callSagaWithPromiseResolver();
       }
 
-      // TODO: Add support for redux thunk later
-      // if ((this.props as IRetryThunkProps).thunk) {
-      //   response = await handleThunk((this.props as IRetryThunkProps).thunk);
-      // }
+      if ((this.props as IRetryThunkProps).thunk) {
+        response = await bindThunkToPromise(this.props.dispatch)((this.props as IRetryThunkProps).thunk);
+      }
 
       this.setState({
         ...this.initialState,
