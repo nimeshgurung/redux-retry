@@ -2,9 +2,8 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import thunk from 'redux-thunk';
 import { call, all } from 'redux-saga/effects';
-import Retry, { retryRoot } from './dist/index';
+import Retry, { retryRoot } from 'redux-retry';
 import { Text, Button, View, StyleSheet } from 'react-native';
 
 const initialState = {};
@@ -25,21 +24,14 @@ const root = function*() {
   yield all([retryRoot()]);
 };
 
-const getCatFactsThunk = function(id) {
-  return (dispatch, getState) => {
-    return fetch('https://cat-fact.herokuapp.com/facts/' + id)
-      .then((response) => response.json())
-  }
-}
-
 const sagaMiddleware = createSagaMiddleware();
-const store = createStore(reducer, compose(applyMiddleware(sagaMiddleware, thunk)));
+const store = createStore(reducer, compose(applyMiddleware(sagaMiddleware)));
 sagaMiddleware.run(root);
 
 class RetryExample extends React.Component {
   render() {
     return (
-      <Retry thunk={{ call: getCatFactsThunk, args: ['5887e1d85c873e0011036889'] }}>
+      <Retry saga={{ call: getCatFacts, args: ['5887e1d85c873e0011036889'] }}>
         {(retryState, retry) => {
           if (retryState.loading) {
             return (
