@@ -131,7 +131,7 @@ Exmaple usage with thunk:
 
 
 
-The value of the call is the actual `saga` ort `thunk` you want to be called when the component mounts, args is the list of arguments you want to be applied to the middleware function when the retry component calls the middleware function.
+The value of the call is the actual `saga` or `thunk` you want to be called when the component mounts, args is the list of arguments you want to be applied to the middleware function when the retry component calls the middleware function.
 
 
 Example usage with multiple saga: 
