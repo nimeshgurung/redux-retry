@@ -100,7 +100,10 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
       );
     }
 
-    return this.bindSagaToPromise(props.saga.call, props.saga.args);
+    return this.bindSagaToPromise(
+      props.saga.call,
+      args && args.length ? args : props.saga.args
+    );
   };
 
   private makeApiCall = async (args?: any) => {
