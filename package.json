@@ -1,6 +1,6 @@
 {
   "name": "redux-retry",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Redux retry for easy state management of async calls",
   "main": "dist/index.js",
   "repository": {
@@ -79,7 +79,9 @@
     "setupFiles": [
       "<rootDir>/setupTest.js"
     ],
-    "modulePathIgnorePatterns": ["<rootDir>/demo"],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/demo"
+    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
