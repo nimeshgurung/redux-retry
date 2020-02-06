@@ -53,7 +53,11 @@ export class Retry extends React.Component<RetryProps, IRetryState> {
 
   constructor(props: RetryProps) {
     super(props);
-    this.state = { ...this.initialState, retryAttempt: 0 };
+    this.state = {
+      ...this.initialState,
+      retryAttempt: 0,
+      loading: this.props.skipCallOnMount ? false : this.initialState.loading
+    };
   }
 
   public componentDidMount() {
