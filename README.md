@@ -139,81 +139,64 @@ The default export remains Provider-connected. The named `Retry` export accepts 
 Component applications. The library does not access the DOM; native app execution is a separate check
 from web browser verification.
 
-## Demo
+## Examples
 
-The single-page [loading and retry demo](docs/index.html) embeds the runnable Saga and Thunk
-CodeSandbox examples. Each shows a spinner, a profile card on success, or an error card with
-Retry on failure. Choose **Try an error** inside the preview to test recovery.
-Serve the repo with `python3 -m http.server 8000` and open `http://localhost:8000/docs/`.
-To host it on GitHub Pages, use the `master` branch and `/docs` folder after merge.
+Try the [live demo](https://nimeshgurung.github.io/redux-retry/) or open the
+[Saga](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48) and
+[Thunk](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67) sandboxes.
+Each shows loading, a profile card on success, and an error card with **Retry**.
+Choose **Try an error** to test recovery.
 
-## Compatibility examples and the release gate
+The [local examples](examples) include `Retry` with Saga and Thunk, plus `useRetry`.
+They use Redux Toolkit's `configureStore`. Add `?store=classic` to either component
+example to try Redux's `legacy_createStore`.
+
+## Compatibility
+
+Supports React 18/19, React Redux 9, Redux 5, Redux Saga 1, and Redux Thunk 3.1.
+Node 22.18 or newer is required. Saga and Thunk are optional peers; install the
+middleware used by your chosen entry point.
+
+CI tests installed package consumers on Node 22/24/26 with React 18/19,
+TypeScript 6/7, ESM/CommonJS, and Bundler/NodeNext resolution. Browser coverage
+runs in Chromium, Firefox, and WebKit. Metro checks iOS/Android bundling;
+it does not verify native UI execution.
+
+## Development
 
 ```sh
 npm ci
-npm run test:compat -- --e2e
-cd .compat/react-19
-npx vite examples --config examples/vite.config.ts
-```
-
-Open `/saga/`, `/thunk/`, or `/use-retry/`. All examples use Redux Toolkit’s `configureStore`
-with its default checks enabled. Add `?store=classic` to either component example to verify
-compatibility with Redux’s `legacy_createStore` API.
-
-The [original saga sandbox](https://codesandbox.io/s/04w2m9kw00) and
-[original thunk sandbox](https://codesandbox.io/s/9lz0kv4xo4) are the regression baselines.
-The updated [saga sandbox](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48) and
-[thunk sandbox](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67) both pin the published
-`redux-retry@1.0.0`. Both demonstrate a fresh request and manual retry.
-CodeSandbox created forks in the signed-in workspace because the originals were not editable.
-The committed [saga](examples/saga/index.jsx) and [thunk](examples/thunk/index.jsx) reproductions keep
-the original class component, render prop, visible states, and direct `onClick={retry}` behavior.
-They update React mounting, middleware imports, dependencies, and the API endpoint. The direct
-[JSONPlaceholder API](https://jsonplaceholder.typicode.com/) replaces the broken CORS proxy; its
-profile `name` is mapped to the original `response.text` contract. Both committed example manifests also pin
-`redux-retry` to exactly `1.0.0`. Generated reports and screenshots are retained as CI artifacts rather than source files.
-
-**E2E verification metric: passed required scenarios / total required scenarios = 100%.** Both original
-examples must pass; any failure or skipped required case fails the gate. There are 60 deterministic
-browser cases: 2 React versions × 3 browsers × 5 integration scenarios × 2 state-transition paths.
-Tests check loading → success → retry → success and failure → retry → recovery, attempt counts,
-exact request counts, and absence of unexpected console warnings/errors. Retries of the test itself
-are disabled. Live API smoke checks are separate and mandatory before publishing.
-
-```sh
 npm run verify
 npx playwright install chromium firefox webkit
 npm run test:compat -- --e2e --live --metro
 ```
 
-Compatibility installs the packed `.tgz` into isolated React 18.3.1 / React 19.3.1 consumers, executes
-21 behavior tests per consumer, checks TypeScript 6/7 with Bundler and NodeNext resolution, tests
-ESM/CommonJS exports, and verifies the thunk-only entry without saga installed. `--metro` also bundles
-the packed package for iOS and Android; this checks package resolution and transformation, not native
-UI execution. Browser tests run in
-Chromium, Firefox, and WebKit. CI runs the matrix on Node 22/24/26. Generated evidence is under
-`.compat/report-node-*.json` and `.compat/react-*/test-results/`.
+The release gate requires **100% of required scenarios to pass** with no skipped
+cases or test retries. Both Saga and Thunk must show loading → success and
+failure → retry → recovery, with correct request counts and no unexpected console
+warnings or errors. Live API checks must also pass. CI retains generated reports
+and screenshots as artifacts.
 
-Development uses Node 26 LTS and TypeScript 6.0.3. TypeScript 7.0.2 is tested as a consumer compiler;
-current TypeScript ESLint support is below 6.1. The package validator uses the modern Node16 resolution
-profile, alongside Bundler and NodeNext consumer checks; obsolete Node10 resolution is not supported.
-The minimatch override pins the patched major for the lint toolchain and is covered by lint checks.
+To run the installed-package examples locally:
 
-## Release
+```sh
+npm run test:compat -- --e2e
+cd .compat/react-19
+npx vite examples --config examples/vite.config.ts
+```
 
-Merge the release changes into `master` and wait for CI to pass. Then run **Publish to npm**
-from `master` in GitHub Actions. It reruns the compatibility gate, checks the live API, and
-publishes the tested tarball with provenance. Stable versions use `latest`; prereleases use
-`next`. An already-published version is rejected. Merging alone does not publish to npm.
+Open `/saga/`, `/thunk/`, or `/use-retry/`.
 
-Configure npm trusted publishing for `.github/workflows/release.yml` and the `npm` GitHub
-environment before the first workflow publication. The README logo and live status badges
-will be included in the next npm publication. Review [CHANGELOG.md](CHANGELOG.md) before releasing.
+## Releasing
 
-## Artwork
+After merging into `master` and passing CI, run **Publish to npm** from GitHub
+Actions. It verifies compatibility and the live API, then publishes the tested
+tarball with provenance. Stable versions use `latest`; prereleases use `next`.
+Published versions cannot be reused. npm trusted publishing must be configured
+for `.github/workflows/release.yml` and the `npm` environment.
 
-The selected blue-nodes sticker is the project's logo. Only the selected image is tracked and
-included in the npm package.
+Review [CHANGELOG.md](CHANGELOG.md) before releasing, then update and verify both
+hosted sandboxes against the published version.
 
 ## License
 
