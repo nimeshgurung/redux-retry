@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Loading, success, error. Try redux-retry in your browser." />
-    <title>redux-retry · Try again.</title>
+    <meta
+      name="description"
+      content="Loading, a response, or a way to try again. See redux-retry running in CodeSandbox."
+    />
+    <title>redux-retry · Live examples</title>
     <style>
       :root {
         font-family: system-ui, sans-serif;
@@ -18,22 +21,19 @@
         margin: 0;
       }
       main {
-        width: min(100% - 40px, 580px);
-        margin: 28px auto;
+        width: min(100% - 40px, 1120px);
+        margin: 24px auto;
       }
       nav,
-      footer,
-      .actions,
-      .meta {
+      .examples {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
       }
       nav {
-        margin-bottom: 28px;
+        margin-bottom: 12px;
         font-size: 14px;
-        font-weight: 700;
       }
       a {
         color: inherit;
@@ -41,187 +41,15 @@
       }
       .wordmark {
         display: block;
-        width: 160px;
+        width: 240px;
         height: auto;
       }
-      h1 {
-        font-size: clamp(48px, 11vw, 72px);
-        line-height: 1;
-        letter-spacing: -4px;
-        margin: 0 0 12px;
-      }
-      .intro {
-        margin: 0 0 32px;
-        color: #55534f;
-      }
-      .card {
-        position: relative;
-        border: 2px solid #151515;
-        background: #fffdf7;
-        border-radius: 16px;
-        overflow: hidden;
-      }
-      .meta {
-        border-bottom: 2px solid #151515;
-        padding: 16px 20px;
-        font:
-          12px ui-monospace,
-          monospace;
-      }
-      .status {
-        padding: 5px 10px;
-        border: 1.5px solid #151515;
-        border-radius: 5px;
-        font-weight: 700;
-        background: #e7edff;
-      }
-      .card[data-state='error'] .status {
-        background: #ffdfd5;
-      }
-      .card[data-state='success'] .status {
-        background: #d9efcb;
-      }
-      .result {
-        min-height: 220px;
-        display: grid;
-        place-content: center;
-        text-align: center;
-        padding: 24px;
-      }
-      .sticker {
-        display: block;
-        width: 104px;
-        height: 104px;
-        object-fit: contain;
-        margin: 0 auto 12px;
-        transform: rotate(-8deg);
-      }
-      .card[data-state='loading'] .sticker {
-        animation: spin 1.5s linear infinite;
-      }
-      .card[data-state='error'] .sticker {
-        transform: rotate(15deg);
-      }
-      .card[data-state='success'] .sticker {
-        animation: cheers 500ms ease-out;
-      }
-      .order,
-      .caption {
-        margin: 0;
-        font-size: 13px;
-        color: #55534f;
-      }
-      .order {
-        margin-bottom: 12px;
-        font-family: ui-monospace, monospace;
-      }
-      .caption {
-        margin-top: 8px;
-      }
-      .message {
-        font-size: 20px;
-        font-weight: 650;
-        margin: 0;
-      }
-      .actions {
-        padding: 0 20px 20px;
-      }
-      button {
-        appearance: none;
-        cursor: pointer;
-        border: 2px solid #151515;
-        border-radius: 7px;
-        padding: 12px 18px;
-        font:
-          650 14px system-ui,
-          sans-serif;
-        background: #fffdf7;
-        color: #151515;
-        min-height: 46px;
-      }
-      button.primary {
-        background: #0755ff;
-        color: white;
-        flex: 1;
-      }
-      button:active {
-        transform: translateY(1px);
-      }
-      button:disabled {
-        cursor: wait;
-        opacity: 0.55;
-      }
-      button:focus-visible,
-      a:focus-visible,
-      summary:focus-visible {
-        outline: 3px solid #0755ff;
-        outline-offset: 5px;
-      }
-      .steps {
-        display: flex;
-        gap: 6px;
-        margin-top: 28px;
-        font:
-          12px ui-monospace,
-          monospace;
-        color: #65615b;
-      }
-      .steps span {
-        flex: 1;
-        padding: 9px 5px;
-        text-align: center;
-        border: 1px solid #b8b4aa;
-        border-radius: 4px;
-      }
-      .steps [aria-current='step'] {
-        border-color: #151515;
-        background: #151515;
-        color: #fffdf7;
-      }
-      details {
-        margin: 26px 0;
-      }
-      summary {
-        cursor: pointer;
-        width: fit-content;
-        font-size: 13px;
-      }
-      pre {
-        margin-top: 12px;
-        padding: 20px;
-        border: 1px solid #b8b4aa;
-        border-radius: 8px;
-        font:
-          12px/1.7 ui-monospace,
-          monospace;
-        overflow-x: auto;
-        background: #fffdf7;
-      }
-      .keyword {
-        color: #0755b9;
-        font-weight: 600;
-      }
-      .string {
-        color: #246b31;
-      }
-      .function {
-        color: #a43a16;
-      }
-      .number {
-        color: #a43a16;
-      }
-      .comment {
-        color: #65615b;
-      }
       .examples {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        margin: 16px 0 10px;
+        margin-bottom: 12px;
         font-size: 13px;
       }
       select {
+        margin-left: 6px;
         font: inherit;
         padding: 8px;
         color: inherit;
@@ -231,79 +59,29 @@
       }
       iframe {
         display: block;
-        width: min(1000px, calc(100vw - 40px));
-        height: 520px;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
+        width: 100%;
+        height: 760px;
         border: 1px solid #151515;
         border-radius: 8px;
         background: #fffdf7;
       }
-      footer {
-        padding-top: 18px;
-        border-top: 1px solid #b8b4aa;
-        font:
-          11px ui-monospace,
-          monospace;
-        color: #65615b;
+      a:focus-visible,
+      select:focus-visible {
+        outline: 3px solid #0755ff;
+        outline-offset: 4px;
       }
-      @keyframes spin {
-        to {
-          transform: rotate(352deg);
-        }
-      }
-      @keyframes cheers {
-        40% {
-          transform: translateY(-10px) rotate(12deg);
-        }
-        70% {
-          transform: rotate(-14deg);
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .card[data-state] .sticker {
-          animation: none;
-        }
-      }
-      @media (max-width: 420px) {
+      @media (max-width: 500px) {
         main {
-          margin: 28px auto;
+          width: calc(100% - 24px);
         }
-        nav {
-          margin-bottom: 40px;
+        .examples {
+          align-items: end;
         }
-        h1 {
-          letter-spacing: -2px;
-        }
-        .actions {
-          gap: 10px;
-          flex-wrap: wrap;
-        }
-        button.primary {
-          flex-basis: 100%;
-        }
-        .actions > button:not(.primary) {
-          flex: 1;
-        }
-        button {
-          padding: 12px;
+        iframe {
+          height: 660px;
         }
       }
     </style>
-    <script type="importmap">
-      {
-        "imports": {
-          "react": "https://esm.sh/react@19.3.1",
-          "react/jsx-runtime": "https://esm.sh/react@19.3.1/jsx-runtime?external=react",
-          "react-dom/client": "https://esm.sh/react-dom@19.3.1/client?external=react",
-          "react-redux": "https://esm.sh/react-redux@9.3.1?external=react,redux",
-          "redux": "https://esm.sh/redux@5.0.1",
-          "@reduxjs/toolkit": "https://esm.sh/@reduxjs/toolkit@2.14.0?external=redux",
-          "redux-retry/thunk": "https://esm.sh/redux-retry@1.0.0-beta.1/thunk?external=react,react-redux,redux"
-        }
-      }
-    </script>
   </head>
   <body>
     <main>
@@ -313,201 +91,51 @@
             class="wordmark"
             src="https://raw.githubusercontent.com/nimeshgurung/redux-retry/v1.0.0-beta.1/assets/logos/blue-nodes.png"
             alt="redux-retry"
-            width="160"
-            height="73"
+            width="240"
+            height="109"
         /></a>
-        <a href="https://github.com/nimeshgurung/redux-retry">GitHub ↗</a>
       </nav>
-      <h1>Try again.</h1>
-      <p class="intro">Loading, errors and retry. No extra reducers.</p>
-      <div id="demo" aria-live="polite"><p>Loading demo…</p></div>
-      <details>
-        <summary>The JavaScript</summary>
-        <pre><code><span class="keyword">import</span> { <span class="function">useRetry</span> } <span class="keyword">from</span> <span class="string">'redux-retry/thunk'</span>;
-
-<span class="keyword">const</span> [state, retry] = <span class="function">useRetry</span>({
-  thunk: { call: checkOrder, args: [<span class="number">42</span>] },
-});
-
-<span class="comment">// state.loading · state.success · state.error
-// state.response · state.retryAttempt
-// retry()</span></code></pre>
-        <div class="examples">
-          <label
-            >Live example
-            <select id="sandbox-choice">
-              <option value="thunk">Thunk</option>
-              <option value="saga">Saga</option>
-            </select></label
-          >
-          <a
-            id="open-sandbox"
-            href="https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Open in CodeSandbox ↗</a
-          >
-        </div>
-        <iframe
-          id="sandbox-example"
-          title="redux-retry Thunk example"
-          src="https://codesandbox.io/embed/cfky67?view=editor+%2B+preview&amp;module=%2Findex.js"
-          loading="lazy"
-          sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
-        ></iframe>
-      </details>
-      <footer>
-        <span>Simulated order status · 700 ms</span
-        ><a href="https://www.npmjs.com/package/redux-retry/v/1.0.0-beta.1">1.0.0-beta.1 ↗</a>
-      </footer>
-      <noscript><p>Enable JavaScript to run the demo.</p></noscript>
+      <div class="examples">
+        <label
+          >Example
+          <select id="sandbox-choice">
+            <option value="thunk">Thunk</option>
+            <option value="saga">Saga</option>
+          </select></label
+        >
+        <a
+          id="open-sandbox"
+          href="https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Open in CodeSandbox ↗</a
+        >
+      </div>
+      <iframe
+        id="sandbox-example"
+        title="redux-retry Thunk example"
+        src="https://codesandbox.io/embed/cfky67?view=preview&amp;module=%2Findex.js&amp;hidenavigation=1"
+        sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
+      ></iframe>
     </main>
     <script type="module">
-      try {
-        const [
-          { createElement: h },
-          { createRoot },
-          { Provider },
-          { configureStore },
-          { useRetry },
-        ] = await Promise.all([
-          import('react'),
-          import('react-dom/client'),
-          import('react-redux'),
-          import('@reduxjs/toolkit'),
-          import('redux-retry/thunk'),
-        ]);
-        const store = configureStore({ reducer: (state = {}) => state });
-        let failNext = null;
-        const checkOrder = (id) => async () => {
-          const shouldFail = failNext;
-          failNext = null;
-          await new Promise((resolve) => setTimeout(resolve, 700));
-          if (shouldFail)
-            throw new Error(
-              shouldFail === 'server' ? '503 Service Unavailable' : 'Network unavailable',
-            );
-          return { id, drink: 'Oat flat white', status: 'Ready at the counter', price: '£3.80' };
-        };
-        function Demo() {
-          const [state, retry] = useRetry({ thunk: { call: checkOrder, args: [42] } });
-          const status = state.loading ? 'loading' : state.error ? 'error' : 'success';
-          const exception =
-            state.exception instanceof Error
-              ? state.exception.message
-              : String(state.exception ?? '');
-          const serverError = exception.startsWith('503');
-          const message = state.loading
-            ? 'Asking the barista…'
-            : state.error
-              ? serverError
-                ? 'The server went for coffee.'
-                : 'Wi-Fi left the chat.'
-              : 'Caffeine secured.';
-          const caption = state.loading
-            ? 'Checking order #042'
-            : state.error
-              ? `${serverError ? '503' : 'Network error'} · Couldn’t check your order. Try again.`
-              : `${state.response?.status} · ${state.response?.price}. Personality loading…`;
-          return h(
-            'div',
-            null,
-            h(
-              'section',
-              {
-                className: 'card',
-                'data-state': status,
-                'aria-label': 'Live retry demo',
-                'aria-busy': state.loading,
-              },
-              h(
-                'div',
-                { className: 'meta' },
-                h('span', { className: 'status' }, status),
-                h('span', null, `retryAttempt: ${state.retryAttempt}`),
-              ),
-              h(
-                'div',
-                { className: 'result' },
-                h('p', { className: 'order' }, 'ORDER #042 · OAT FLAT WHITE'),
-                h('img', {
-                  className: 'sticker',
-                  src: './retry-sticker.png',
-                  alt: '',
-                  width: 104,
-                  height: 104,
-                }),
-                h('p', { className: 'message' }, message),
-                h('p', { className: 'caption' }, caption),
-              ),
-              h(
-                'div',
-                { className: 'actions' },
-                h(
-                  'button',
-                  { className: 'primary', disabled: state.loading, onClick: retry },
-                  state.loading ? 'Checking…' : state.error ? 'Retry ↻' : 'Check again ↻',
-                ),
-                h(
-                  'button',
-                  {
-                    disabled: state.loading,
-                    onClick: () => {
-                      failNext = 'server';
-                      retry();
-                    },
-                  },
-                  '503 once',
-                ),
-                h(
-                  'button',
-                  {
-                    disabled: state.loading,
-                    onClick: () => {
-                      failNext = 'offline';
-                      retry();
-                    },
-                  },
-                  'Offline once',
-                ),
-              ),
-            ),
-            h(
-              'div',
-              { className: 'steps', 'aria-label': 'Request state' },
-              ...['loading', 'success', 'error'].map((step) =>
-                h(
-                  'span',
-                  { key: step, 'aria-current': status === step ? 'step' : undefined },
-                  step,
-                ),
-              ),
-            ),
-          );
-        }
-        const sandboxes = {
-          thunk: {
-            id: 'cfky67',
-            url: 'https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67',
-          },
-          saga: {
-            id: '35jv48',
-            url: 'https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48',
-          },
-        };
-        document.getElementById('sandbox-choice').addEventListener('change', (event) => {
-          const example = sandboxes[event.target.value];
-          const frame = document.getElementById('sandbox-example');
-          frame.src = `https://codesandbox.io/embed/${example.id}?view=editor+%2B+preview&module=%2Findex.js`;
-          frame.title = `redux-retry ${event.target.value === 'thunk' ? 'Thunk' : 'Saga'} example`;
-          document.getElementById('open-sandbox').href = example.url;
-        });
-        createRoot(document.getElementById('demo')).render(h(Provider, { store }, h(Demo)));
-      } catch (error) {
-        document.getElementById('demo').textContent =
-          'Could not load the demo. Check your connection and reload.';
-        console.error(error);
-      }
+      const sandboxes = {
+        thunk: {
+          id: 'cfky67',
+          url: 'https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67',
+        },
+        saga: {
+          id: '35jv48',
+          url: 'https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48',
+        },
+      };
+      document.getElementById('sandbox-choice').addEventListener('change', (event) => {
+        const example = sandboxes[event.target.value];
+        const frame = document.getElementById('sandbox-example');
+        frame.src = `https://codesandbox.io/embed/${example.id}?view=preview&module=%2Findex.js&hidenavigation=1`;
+        frame.title = `redux-retry ${event.target.value === 'thunk' ? 'Thunk' : 'Saga'} example`;
+        document.getElementById('open-sandbox').href = example.url;
+      });
     </script>
   </body>
 </html>

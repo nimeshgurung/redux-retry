@@ -38,7 +38,7 @@ for (const scenario of scenarios) {
         await route.fulfill({ json: { body: `Response ${attempt}` } });
       });
       await page.goto(scenario.path);
-      await expect(page.getByText('...Loading', { exact: true })).toBeVisible();
+      await expect(page.getByRole('status', { name: 'Loading', exact: true })).toBeVisible();
       await expect.poll(() => count).toBe(1);
       release();
       await expect(page.getByText('Response 1', { exact: true })).toBeVisible();
@@ -47,7 +47,7 @@ for (const scenario of scenarios) {
         release = resolve;
       });
       await page.getByRole('button', { name: 'Retry', exact: true }).click();
-      await expect(page.getByText('...Loading', { exact: true })).toBeVisible();
+      await expect(page.getByRole('status', { name: 'Loading', exact: true })).toBeVisible();
       await expect.poll(() => count).toBe(2);
       release();
       await expect(page.getByText('Response 2', { exact: true })).toBeVisible();

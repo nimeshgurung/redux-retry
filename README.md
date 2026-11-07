@@ -139,10 +139,10 @@ from web browser verification.
 
 ## Demo
 
-The single-page [loading and retry demo](docs/index.html) loads the published package directly as
-JavaScript modules. Serve the repo with `python3 -m http.server 8000` and open
-`http://localhost:8000/docs/`. It demonstrates loading, success, a simulated failure, and recovery
-with `useRetry`. The request is simulated so the demo does not rely on a third-party API.
+The single-page [loading and retry demo](docs/index.html) embeds the runnable Saga and Thunk
+CodeSandbox examples. Each shows a spinner, a response card on success, or an error card with
+Retry on failure. Choose **Try an error** inside the preview to test recovery.
+Serve the repo with `python3 -m http.server 8000` and open `http://localhost:8000/docs/`.
 To host it on GitHub Pages, use the `master` branch and `/docs` folder after merge.
 
 ## Compatibility examples and the release gate

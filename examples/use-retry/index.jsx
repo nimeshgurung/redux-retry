@@ -9,7 +9,12 @@ const store = configureStore({ reducer });
 const getPostThunk = createAsyncThunk('example/post', getPost);
 function Example() {
   const [state, retry] = useRetry({ thunk: { call: getPostThunk, args: [1] } });
-  if (state.loading) return <p>...Loading</p>;
+  if (state.loading)
+    return (
+      <p role="status" aria-label="Loading">
+        Loading…
+      </p>
+    );
   return (
     <div>
       <div data-testid="attempt">{state.retryAttempt}</div>
