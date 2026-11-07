@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+- Simplify the README while keeping the live demo and Saga/Thunk quick starts.
+- Move detailed API behavior to `API.md` and contributor/release instructions to `.github/CONTRIBUTING.md`.
+- Publish under `next`; `latest` remains `0.0.7`. Library runtime and public APIs are unchanged.
+
 ## 1.0.0
 
 Release channel: `next` for opt-in installation. `latest` remains on `0.0.7`.
