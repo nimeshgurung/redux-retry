@@ -1,6 +1,15 @@
 name: Publish to npm
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: npm release channel
+        type: choice
+        required: true
+        default: next
+        options:
+          - next
+          - latest
 
 permissions:
   contents: read
@@ -27,6 +36,8 @@ jobs:
       - run: npm ci
       - name: Check release version
         id: release
+        env:
+          NPM_DIST_TAG: ${{ inputs.tag }}
         run: |
           node --input-type=module <<'JS'
           import { readFileSync, appendFileSync } from 'node:fs';
@@ -34,7 +45,10 @@ jobs:
           const { name, version } = JSON.parse(readFileSync('package.json', 'utf8'));
           const versions = JSON.parse(execFileSync('npm', ['view', name, 'versions', '--json'], { encoding: 'utf8' }));
           if (versions.includes(version)) throw new Error(`${name}@${version} is already published. Bump the version first.`);
-          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ntag=${version.includes('-') ? 'next' : 'latest'}\n`);
+          const tag = process.env.NPM_DIST_TAG;
+          if (!['next', 'latest'].includes(tag)) throw new Error('Choose next or latest as the npm channel.');
+          if (tag === 'latest' && version.includes('-')) throw new Error('Publish prereleases under next.');
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ntag=${tag}\n`);
           JS
       - run: npx playwright install --with-deps chromium
       - run: npm run test:compat -- --react=19 --e2e --chromium-only --live --metro

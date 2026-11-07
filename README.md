@@ -4,7 +4,7 @@
 
 [![Build, types and tests](https://github.com/nimeshgurung/redux-retry/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/nimeshgurung/redux-retry/actions/workflows/ci.yml)
 [![Publish to npm](https://github.com/nimeshgurung/redux-retry/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/nimeshgurung/redux-retry/actions/workflows/release.yml)
-[![npm version](https://img.shields.io/npm/v/redux-retry)](https://www.npmjs.com/package/redux-retry)
+[![npm next](https://img.shields.io/npm/v/redux-retry/next?label=npm%20next)](https://www.npmjs.com/package/redux-retry)
 
 Keep loading, success, failure, and manual retry state local to a React component while running
 Redux sagas or thunks. Use the existing `<Retry>` render-prop component or the new `useRetry` hook.
@@ -12,12 +12,13 @@ Redux sagas or thunks. Use the existing `<Retry>` render-prop component or the n
 For coding agents: [Markdown install and API guide](llm.text) · [llms.txt](llms.txt).
 
 **1.0.0** targets React 18/19, React Redux 9, and Redux 5. See [migration notes](CHANGELOG.md).
-Stable releases use npm's `latest` tag; beta releases use `next`.
+The modern 1.x release uses npm's `next` channel for an opt-in rollout. `latest` stays on legacy
+`0.0.7`, so plain `npm install redux-retry` continues to install the older release.
 
 ## Install
 
 ```sh
-npm install redux-retry react-redux redux
+npm install redux-retry@next react-redux redux
 # Install the middleware you use:
 npm install redux-saga
 # Or use Redux Toolkit (which includes thunk middleware):
@@ -25,6 +26,7 @@ npm install @reduxjs/toolkit
 ```
 
 For local package verification, install the `.tgz` produced by `npm pack`.
+To pin the modern release exactly, use `redux-retry@1.0.0` instead of `redux-retry@next`.
 
 ## Existing component: sagas
 
@@ -191,7 +193,9 @@ Open `/saga/`, `/thunk/`, or `/use-retry/`.
 
 After merging into `master` and passing CI, run **Publish to npm** from GitHub
 Actions. It verifies compatibility and the live API, then publishes the tested
-tarball with provenance. Stable versions use `latest`; prereleases use `next`.
+tarball with provenance. Select the npm channel explicitly; the default is `next`.
+Publish `1.0.0` under `next` during rollout, leaving `latest` on `0.0.7`. Choose `latest`
+only when a new version should become the default install. Prereleases must use `next`.
 Published versions cannot be reused. npm trusted publishing must be configured
 for `.github/workflows/release.yml` and the `npm` environment.
 
