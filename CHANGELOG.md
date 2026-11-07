@@ -1,6 +1,8 @@
 # Changelog
 
-## 1.0.0 (unreleased)
+## 1.0.0
+
+Release channel: `next` for opt-in installation. `latest` remains on `0.0.7`.
 
 Includes the changes verified in 1.0.0-beta.1, plus the corrected README logo, status badges,
 a single-page browser demo, and a version-aware npm publishing workflow.
