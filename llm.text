@@ -10,17 +10,16 @@ Use the `Retry` render-prop component or the `useRetry` hook. No extra reducers 
 
 ## Install
 
-Use stable `1.0.0` when it appears in npm metadata. Until then, the available modern release
-is `1.0.0-beta.1`, also tagged `next`. The command below installs that published beta;
-replace its version with `1.0.0` once the stable release is available.
-Do not install the older `0.0.x` release for the hook API. Check availability first:
+Install stable `1.0.0` for the modern component and hook APIs.
+The earlier `1.0.0-beta.1` prerelease remains available for beta consumers.
+Do not install the older `0.0.x` release for the hook API. Check published versions with:
 
 ```sh
 npm view redux-retry versions --json
 ```
 
 ```sh
-npm install redux-retry@1.0.0-beta.1 react@^19 react-dom@^19 react-redux@^9 redux@^5 @reduxjs/toolkit
+npm install redux-retry@1.0.0 react@^19 react-dom@^19 react-redux@^9 redux@^5 @reduxjs/toolkit
 ```
 
 React 18 is also supported. The modern baseline is React 18/19, React Redux 9 and Redux 5.

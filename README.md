@@ -164,14 +164,14 @@ The [original saga sandbox](https://codesandbox.io/s/04w2m9kw00) and
 [original thunk sandbox](https://codesandbox.io/s/9lz0kv4xo4) are the regression baselines.
 The updated [saga sandbox](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48) and
 [thunk sandbox](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67) both pin the published
-`redux-retry@1.0.0-beta.1`. Both passed a fresh page load and manual retry after publication.
+`redux-retry@1.0.0`. Both demonstrate a fresh request and manual retry.
 CodeSandbox created forks in the signed-in workspace because the originals were not editable.
 The committed [saga](examples/saga/index.jsx) and [thunk](examples/thunk/index.jsx) reproductions keep
 the original class component, render prop, visible states, and direct `onClick={retry}` behavior.
 They update React mounting, middleware imports, dependencies, and the API endpoint. The direct
 [JSONPlaceholder API](https://jsonplaceholder.typicode.com/) replaces the broken CORS proxy; its
 profile `name` is mapped to the original `response.text` contract. Both committed example manifests also pin
-`redux-retry` to exactly `1.0.0-beta.1`. Generated reports and screenshots are retained as CI artifacts rather than source files.
+`redux-retry` to exactly `1.0.0`. Generated reports and screenshots are retained as CI artifacts rather than source files.
 
 **E2E verification metric: passed required scenarios / total required scenarios = 100%.** Both original
 examples must pass; any failure or skipped required case fails the gate. There are 60 deterministic
