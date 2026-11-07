@@ -1,231 +1,199 @@
-Redux retry
-=========================
-[![Build Status](https://travis-ci.com/nimeshgurung/redux-retry.svg?branch=master)](https://travis-ci.com/nimeshgurung/redux-retry)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/06a207879a7f0c4a2305/test_coverage)](https://codeclimate.com/github/nimeshgurung/redux-retry/test_coverage)
+<p align="center"><img src="assets/logos/blue-nodes.png" alt="redux-retry" width="560"></p>
 
+# redux-retry
 
-## Redux retry in a nutshell
-Redux retry is a simple component, which calls the redux middleware functions, and maintains the loading, success or failure state of the middleware functions. In a nutshell all it does is brings a lot of stuff that deals with making api request via the middleware functions and the maintenance of state around it away from the redux store, and brings it inline inside the component itself, for easy state management.
+Keep loading, success, failure, and manual retry state local to a React component while running
+Redux sagas or thunks. Use the existing `<Retry>` render-prop component or the new `useRetry` hook.
 
-#### Example:
+**1.0.0-beta.1** targets React 18/19, React Redux 9, and Redux 5. See [migration notes](CHANGELOG.md).
+This is a beta: npm's `next` tag will be used when it is published.
+
+## Install
+
+After the beta is published:
+
+```sh
+npm install redux-retry@next react-redux redux
+# Install the middleware you use:
+npm install redux-saga
+# Or use Redux Toolkit (which includes thunk middleware):
+npm install @reduxjs/toolkit
+```
+
+For local verification before publication, install the `.tgz` produced by `npm pack`.
+
+## Existing component: sagas
+
+Run `retryRoot()` once in your application's root saga. Existing `yield all([retryRoot()])` setup works.
 
 ```tsx
-import React from "react";
-import { render } from "react-dom";
-import { Provider } from "react-redux";
-import { createStore, applyMiddleware, compose } from "redux";
-import createSagaMiddleware from "redux-saga";
-import { call, all } from "redux-saga/effects";
-import Retry, { retryRoot } from "redux-retry";
-const initialState = {};
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import createSagaMiddleware from 'redux-saga';
+import { call } from 'redux-saga/effects';
+import Retry, { retryRoot } from 'redux-retry';
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
-};
+async function getPost(id: number): Promise<{ body: string }> {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+  return response.json();
+}
 
-const getCatFacts = function*(id) {
-  const response = yield call(
-    fetch,
-    "https://cors-anywhere.herokuapp.com/https://cat-fact.herokuapp.com/facts/" +
-      id
-  );
-  return yield response.json();
-};
+function* loadPost(id: number): Generator<unknown, { body: string }, { body: string }> {
+  return yield call(getPost, id);
+}
 
-const root = function*() {
-  // This part is important for redux-retry to be able 
-  // to hook into the redux-saga ecosystem of your app
-  yield all([retryRoot()]);
-};
+const saga = createSagaMiddleware();
+const store = configureStore({
+  reducer: (state = {}) => state,
+  middleware: (getDefault) => getDefault().concat(saga),
+});
+saga.run(retryRoot);
 
-const sagaMiddleware = createSagaMiddleware();
-const store = createStore(reducer, compose(applyMiddleware(sagaMiddleware)));
-sagaMiddleware.run(root);
-
-export default class RetryExample extends React.Component {
-  render() {
-    return (
-      <Retry saga={{ call: getCatFacts, args: ["5887e1d85c873e0011036889"] }}>
-        {(retryState, retry) => {
-          if (retryState.loading) {
-            return <p>...Loading</p>;
-          }
-
-          if (retryState.success) {
-            return (
-              <div>
-                <div>{retryState.retryAttempt}</div>
-                <p>{retryState.response.text}</p>
-                <button type="button" onClick={retry}>
-                  Retry
-                </button>
-              </div>
-            );
-          }
-
-          if (retryState.error) {
-            return (
-              <div>
-                <div>Error</div>
-                <div>{retryState.retryAttempt}</div>
-                <button type="button" onClick={retry}>
-                  Retry
-                </button>
-              </div>
-            );
-          }
-          return null;
-        }}
+export function App() {
+  return (
+    <Provider store={store}>
+      <Retry saga={{ call: loadPost, args: [1] }}>
+        {(state, retry) => (
+          <div>
+            {state.loading && <p>Loading…</p>}
+            {state.error && <p>Error: {String(state.exception)}</p>}
+            {state.success && <p>{state.response?.body}</p>}
+            <p>Retries: {state.retryAttempt}</p>
+            <button onClick={retry}>Retry</button>
+          </div>
+        )}
       </Retry>
-    );
-  }
-}
-
-const App = () => (
-  <Provider store={store}>
-    <RetryExample />
-  </Provider>
-);
-
-render(<App />, document.getElementById("root"));
-```
-
-Example link redux saga: https://codesandbox.io/s/04w2m9kw00
-
-Example link redux thunk: https://codesandbox.io/s/9lz0kv4xo4
-
-#### RetryRoot - [only required for redux saga]
-
-```typescript
-import { retryRoot } from 'redux-retry';
-
-export function* rootSaga() {
-  yield all([retryRoot()])
+    </Provider>
+  );
 }
 ```
 
-Retryroot is a helper function that is exposed by `redux-rery` that allows the `Retry` component to be able to hook into the redux ecosystem of your app. Without hooking the `retryRoot` to your applications root saga, the `Retry` component won't be able to make the saga calls. This is not necessary if you want to only use `thunks` with `redux-retry`.
+## Hook: thunks and Redux Toolkit
 
-
-#### Passing middleware functions to redux-retry
-
-When you provide `saga` or a `thunk` as a prop it expects either an `object` or an `array`.
-
-Example usage with saga:
+Use the thunk-only entry point if your application does not install `redux-saga`.
+Both `useRetry` and the default component require a React Redux `<Provider>`.
 
 ```tsx
-  <Retry saga={{ call: saga, args:[arg1, arg2]}} >
-     {(retryState, retry) => null}
-  </Retry>
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { useRetry } from 'redux-retry/thunk';
+
+const loadPost = createAsyncThunk('posts/load', async (id: number) => {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+  return response.json() as Promise<{ body: string }>;
+});
+
+export function Post() {
+  const [state, retry] = useRetry({ thunk: { call: loadPost, args: [1] } });
+  return (
+    <div>
+      {state.loading && <p>Loading…</p>}
+      {state.error && <p>Error: {String(state.exception)}</p>}
+      {state.success && <p>{state.response?.body}</p>}
+      <button onClick={() => retry([2])}>Retry with post 2</button>
+    </div>
+  );
+}
 ```
 
-Exmaple usage with thunk:
-```tsx
-  <Retry thunk={{ call: thunk, args:[arg1, arg2]}} >
-     {(retryState, retry) => null}
-  </Retry>
+Regular thunks work too, including synchronous returns and middleware `extraArgument` injection.
+`createAsyncThunk` results are unwrapped: fulfilled payloads become `response`; rejected values become
+`exception`. For the render-prop API, use `<Retry thunk={{ call: loadPost, args: [1] }}>` as before.
+`useRetry({ saga: { call, args } })` uses the same saga bridge as the component.
+
+## API and behavior
+
+| Input                       | Meaning                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------- |
+| `saga: { call, args? }`     | Generator function and its arguments; requires saga middleware and `retryRoot()`  |
+| `thunk: { call, args? }`    | Thunk action creator and its arguments; requires thunk middleware                 |
+| Array of call definitions   | Run concurrently; return results in input order; fail the batch if one call fails |
+| `skipCallOnMount?: boolean` | Start idle when true; default false                                               |
+| `loader?: ReactNode`        | Component-only replacement for children while loading                             |
+| `children(state, retry)`    | Existing component render prop                                                    |
+
+Provide exactly one of `saga` or `thunk`. Arguments and response types are inferred, including batch
+responses. The hook returns `[state, retry]`. State contains `loading`, `success`, `error`, `response`,
+`exception`, and `retryAttempt`. The initial request has attempt 0; every manual retry increments it.
+
+`retry()` reuses the latest props and their arguments. `retry([newArgs])` overrides arguments for that
+attempt, and an explicit `[]` clears arguments. In a batch, overrides apply to every call. Pass `retry`
+directly to `onClick` or `onPress`; UI event objects are ignored. Prop changes do not automatically
+execute requests. Async state resets at each attempt, and the latest attempt controls visible state.
+
+Cleanup ignores stale completions, cancels saga work, and calls `.abort()` on abortable thunk results.
+Arbitrary promises cannot be forcibly aborted. React Strict Mode can start work twice in development;
+cleanup discards/cancels the obsolete setup. Normal production mounting starts one request.
+No automatic backoff or background retry policy is enabled.
+
+The default export remains Provider-connected. The named `Retry` export accepts an explicit Redux
+`dispatch` without requiring a Provider. Runtime imports support ESM and CommonJS; imports are
+`redux-retry`, `redux-retry/saga`, and `redux-retry/thunk`. Use a client component in React Server
+Component applications. The library does not access the DOM; native app execution is a separate check
+from web browser verification.
+
+## Runnable examples and the release gate
+
+```sh
+npm ci
+npm test
+npx vite examples --config examples/vite.config.ts
 ```
 
+Open `/saga/`, `/thunk/`, or `/use-retry/`. Add `?store=toolkit` to either original component example
+to use Redux Toolkit with its default checks enabled.
 
+The [original saga sandbox](https://codesandbox.io/s/04w2m9kw00) and
+[original thunk sandbox](https://codesandbox.io/s/9lz0kv4xo4) are the regression baselines. Their source
+was inspected in the browser. Both currently use redux-retry 0.0.2 and an obsolete proxy API.
+The committed [saga](examples/saga/index.jsx) and [thunk](examples/thunk/index.jsx) reproductions keep
+the original class component, render prop, visible states, and direct `onClick={retry}` behavior.
+They update React mounting, middleware imports, dependencies, and the API endpoint. The direct
+[JSONPlaceholder API](https://jsonplaceholder.typicode.com/) replaces the broken CORS proxy; its
+`body` is mapped to the original `response.text` contract. Hosted sandboxes are not automatically
+updated by these local changes. Both example manifests pin `redux-retry` to exactly
+`1.0.0-beta.1`; import the example folders into CodeSandbox after that version is published, and
+update the original hosted sandboxes to that same version. Do not leave them on `latest` or 0.0.2.
 
-The value of the call is the actual `saga` ort `thunk` you want to be called when the component mounts, args is the list of arguments you want to be applied to the middleware function when the retry component calls the middleware function.
+**E2E verification metric: passed required scenarios / total required scenarios = 100%.** Both original
+examples must pass; any failure or skipped required case fails the gate. There are 60 deterministic
+browser cases: 2 React versions × 3 browsers × 5 integration scenarios × 2 state-transition paths.
+Tests check loading → success → retry → success and failure → retry → recovery, attempt counts,
+exact request counts, and absence of unexpected console warnings/errors. Retries of the test itself
+are disabled. Live API smoke checks are separate and mandatory before publishing.
 
-
-Example usage with multiple saga: 
-
-```tsx
-  <Retry saga = {[
-          {
-            call: saga1,
-            args: [arg1, arg2]
-          },
-          {
-            call: saga2,
-            args: [arg3, arg4]
-          }
-        ]} >
-    {(retryState, retry) => null}
-  </Retry>
+```sh
+npm run verify
+npx playwright install chromium firefox webkit
+npm run test:compat -- --e2e --live --metro
 ```
 
-Example usage with multiple thunks:
-```tsx
-  <Retry thunk = {[
-          {
-            call: thunk1,
-            args: [arg1, arg2]
-          },
-          {
-            call: thunk2,
-            args: [arg3, arg4]
-          }
-        ]} >
-    {(retryState, retry) => null}
-  </Retry>
-```
+Compatibility installs the packed `.tgz` into isolated React 18.3.1 / React 19.3.1 consumers, executes
+21 behavior tests per consumer, checks TypeScript 6/7 with Bundler and NodeNext resolution, tests
+ESM/CommonJS exports, and verifies the thunk-only entry without saga installed. `--metro` also bundles
+the packed package for iOS and Android; this checks package resolution and transformation, not native
+UI execution. Browser tests run in
+Chromium, Firefox, and WebKit. CI runs the matrix on Node 22/24/26. Generated evidence is under
+`.compat/report-node-*.json` and `.compat/react-*/test-results/`.
 
-In this above scenario it will call all middleware functions just like `Promise.all`. If any one of the requests fails it will result in failed state.
+Development uses Node 26 LTS and TypeScript 6.0.3. TypeScript 7.0.2 is tested as a consumer compiler;
+current TypeScript ESLint support is below 6.1. The package validator uses the modern Node16 resolution
+profile, alongside Bundler and NodeNext consumer checks; obsolete Node10 resolution is not supported.
+The minimatch override pins the patched major for the lint toolchain and is covered by lint checks.
 
-#### Children prop
+## Release
 
-The childern prop is something that is provided to the Retry component by the consumer of the component.
+The publish workflow is manual and gated on CI plus live API checks. Configure the npm trusted
+publisher for `.github/workflows/release.yml` and the `npm` GitHub environment before dispatching it.
+Publishing uses OIDC provenance and the `next` tag. Changing the package version or running verification
+does not publish a release. Review [CHANGELOG.md](CHANGELOG.md) before publishing.
 
-Example:
-```tsx
-<Retry thunk={{call: thunk, args:[1, 2]}}>
-    {(retryState, retry) => {
-     return (
-       <React.Fragment>
-        <div>{retrsyState.retryAttempt}</div>
-        <button onClick={retry}>Retry</button>
-        <div>{retryState.response}</div>
-      </React.Fragment>
-      );
-    }}
-</Retry>
-```
+## Artwork
 
-In return the Retry component calls the children prop with two arguments, the `retryState` and the `retry` function.
+The selected blue-nodes sticker and five variations are in [assets/logos](assets/logos). Images were
+created with the built-in image generation tool; prompts are retained alongside them.
 
-#### RetryState
+## License
 
-The retry state is a represenstation of the state of the retry component internally and is exposed to the consumer. It provides the following attributes. 
-
-```typescript
-  interface IRetryState {
-    retryAttempt: number; // the number of retry attempts
-    error: boolean; // true when saga throws an error
-    exception: unknown; // The exception that was thrown
-    success: boolean; // true when request was successful
-    loading: boolean; // true when request is in flight
-    response: unknown; // reponse returned from the saga
-  }
-```
-
-If an error happens the `error` flag is set to true however the actual exception is provided in the `exception` attribute.
-
-In the same way if the request was successful the `success` flag is turned true but the actual `response` again is provided in the `response` attribute.
-
-If the saga is still in operation and hasn't finished processing yet, the `loading` flag will be set to true.
-
-The `retryAttempt` attribute simply gives the count of how many times the saga has been retried. Everytime any one of the state changes the `Retry` component internally calls `setState` which in turn re-renders the children of `Retry` component with appropriate state.
-
-
-#### Retry function
-
-The retry function get's passed in as a second argument to the children prop function. When it is invoked the `Retry` component simply `retries` the saga with the arguments passed in for that saga.
-
-
-#### When does the Retry component call the redux middleware or the async function?
-
-The provided redux middleware function is called by the `Retry` after it is mounted in `componentDidMount`. The retry component does not retry the middleware functions, on prop updates.
-
-
-## Motivation behind the component
-Not everything should be stored in redux store. `Loading`, `Success`, `Error` these are all normally the state we have to manage for any outgoing api calls. Most of the time we only care about tiny part of the response that we want to store. Maintaining loading, success and error scenario for each and every api calls is a bit of overkill and is a mental overhead that if can be avoided makes life simpler. Bringing the maintainance of these state inline seems to fare a lot better, leaving redux to be used only when absolutely necessary.
-
-Also if you ever have had requirements to handle, retrying of requests, maintaining all that state in redux store, actions, props and dispatches becomes a mess that is hard to maintain.
-
+MIT.

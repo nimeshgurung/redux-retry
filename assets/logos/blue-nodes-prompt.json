@@ -1,0 +1,5 @@
+{
+  "name": "Blue nodes — no ticks",
+  "tool": "Built-in image_gen",
+  "prompt": "Use case: precise-object-edit, logo-brand. Edit this exact blue-nodes redux-retry die-cut sticker. Remove ONLY the six small black decorative ray/tick/accent marks: the three above-left of the top blue node and the three below the right part of the wordmark. Smooth the white die-cut outline locally where those accents extended it, leaving a clean natural contour. Preserve the blue circular connected-node retry-arrow symbol, exact lowercase text 'redux-retry', black lettering, blue offset ink, cream/white sticker body, border, proportions, paper texture, folded bottom-right corner, and transparent background. No new decorative marks, no checkmarks, no purple. Everything else must remain as close to the reference as possible."
+}

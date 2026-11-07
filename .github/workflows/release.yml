@@ -1,0 +1,32 @@
+name: Publish beta
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          package-manager-cache: false
+      - run: npm ci
+      - run: npm run verify
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:compat -- --e2e --chromium-only --live --metro
+      - name: Confirm beta version
+        run: node -e "if (JSON.parse(require('fs').readFileSync('package.json')).version !== '1.0.0-beta.1') process.exit(1)"
+      - run: npm publish --tag next --provenance

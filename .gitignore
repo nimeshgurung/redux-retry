@@ -1,4 +1,7 @@
 dist/
+test-results/
+playwright-report/
+.compat/
 
 # Created by https://www.gitignore.io/api/node,macos,windows,webstorm,sublimetext,visualstudiocode
 

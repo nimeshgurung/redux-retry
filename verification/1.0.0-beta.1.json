@@ -1,0 +1,147 @@
+{
+  "version": "1.0.0-beta.1",
+  "date": "2026-11-07",
+  "artifact": ".compat/redux-retry-1.0.0-beta.1.tgz",
+  "sha256": "0943183254efa73101b74398ed1f6d4bf8f7e57fc59dad5555b716793f83e303",
+  "metric": {
+    "name": "Required E2E scenario pass rate",
+    "passed": 180,
+    "total": 180,
+    "rate": 1,
+    "retries": 0,
+    "skipped": 0
+  },
+  "integration": {
+    "passed": 126,
+    "total": 126
+  },
+  "liveApi": {
+    "passed": 12,
+    "total": 12,
+    "endpoint": "https://jsonplaceholder.typicode.com/posts/1"
+  },
+  "metro": {
+    "passed": 12,
+    "total": 12,
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "scope": "Package bundling only; native UI not executed"
+  },
+  "consumerTypes": {
+    "compilers": [
+      "6.0.3",
+      "7.0.2"
+    ],
+    "resolution": [
+      "Bundler",
+      "NodeNext"
+    ],
+    "exactInference": true,
+    "invalidArgumentsRejected": true,
+    "explicitAnyTypes": 0
+  },
+  "quality": {
+    "lint": "pass",
+    "format": "pass",
+    "packageValidation": "pass",
+    "actionlint": "pass",
+    "reactDoctor": 100,
+    "npmAuditVulnerabilities": 0
+  },
+  "matrix": [
+    {
+      "node": "v22.22.0",
+      "react": "18.3.1",
+      "integration": "pass",
+      "typescript6": "pass",
+      "typescript7": "pass",
+      "integrationTests": 21,
+      "esm": "pass",
+      "cjs": "pass",
+      "e2e": "pass",
+      "live": "pass",
+      "metro": "pass"
+    },
+    {
+      "node": "v22.22.0",
+      "react": "19.3.1",
+      "integration": "pass",
+      "typescript6": "pass",
+      "typescript7": "pass",
+      "integrationTests": 21,
+      "esm": "pass",
+      "cjs": "pass",
+      "e2e": "pass",
+      "live": "pass",
+      "metro": "pass"
+    },
+    {
+      "node": "v24.12.0",
+      "react": "18.3.1",
+      "integration": "pass",
+      "typescript6": "pass",
+      "typescript7": "pass",
+      "integrationTests": 21,
+      "esm": "pass",
+      "cjs": "pass",
+      "e2e": "pass",
+      "live": "pass",
+      "metro": "pass"
+    },
+    {
+      "node": "v24.12.0",
+      "react": "19.3.1",
+      "integration": "pass",
+      "typescript6": "pass",
+      "typescript7": "pass",
+      "integrationTests": 21,
+      "esm": "pass",
+      "cjs": "pass",
+      "e2e": "pass",
+      "live": "pass",
+      "metro": "pass"
+    },
+    {
+      "node": "v26.13.0",
+      "react": "18.3.1",
+      "integration": "pass",
+      "typescript6": "pass",
+      "typescript7": "pass",
+      "integrationTests": 21,
+      "esm": "pass",
+      "cjs": "pass",
+      "e2e": "pass",
+      "live": "pass",
+      "metro": "pass"
+    },
+    {
+      "node": "v26.13.0",
+      "react": "19.3.1",
+      "integration": "pass",
+      "typescript6": "pass",
+      "typescript7": "pass",
+      "integrationTests": 21,
+      "esm": "pass",
+      "cjs": "pass",
+      "e2e": "pass",
+      "live": "pass",
+      "metro": "pass"
+    }
+  ],
+  "hostedExamples": {
+    "saga": "https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48",
+    "thunk": "https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67",
+    "apiFixed": true,
+    "manualRetryVerified": true,
+    "currentPackage": "0.0.2",
+    "afterPublicationPackage": "1.0.0-beta.1",
+    "note": "CodeSandbox created forks in the signed-in workspace; original sandboxes were not editable."
+  },
+  "publication": {
+    "published": false,
+    "tag": "next",
+    "trustedPublisherConfigurationRequired": true
+  }
+}
