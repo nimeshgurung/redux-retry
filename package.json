@@ -82,6 +82,8 @@
     "dist",
     "LICENSE",
     "README.md",
+    "llm.text",
+    "llms.txt",
     "CHANGELOG.md",
     "assets/logos/blue-nodes.png"
   ],

@@ -9,6 +9,8 @@
 Keep loading, success, failure, and manual retry state local to a React component while running
 Redux sagas or thunks. Use the existing `<Retry>` render-prop component or the new `useRetry` hook.
 
+For coding agents: [Markdown install and API guide](llm.text) · [llms.txt](llms.txt).
+
 **1.0.0** targets React 18/19, React Redux 9, and Redux 5. See [migration notes](CHANGELOG.md).
 Stable releases use npm's `latest` tag; beta releases use `next`.
 

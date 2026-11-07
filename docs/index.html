@@ -58,7 +58,6 @@
         position: relative;
         border: 2px solid #151515;
         background: #fffdf7;
-        box-shadow: 7px 7px 0 #151515;
         border-radius: 16px;
         overflow: hidden;
       }
@@ -103,6 +102,22 @@
       .card[data-state='error'] .sticker {
         transform: rotate(15deg);
       }
+      .card[data-state='success'] .sticker {
+        animation: cheers 500ms ease-out;
+      }
+      .order,
+      .caption {
+        margin: 0;
+        font-size: 13px;
+        color: #55534f;
+      }
+      .order {
+        margin-bottom: 12px;
+        font-family: ui-monospace, monospace;
+      }
+      .caption {
+        margin-top: 8px;
+      }
       .message {
         font-size: 20px;
         font-weight: 650;
@@ -120,7 +135,6 @@
         font:
           650 14px system-ui,
           sans-serif;
-        box-shadow: 3px 3px 0 #151515;
         background: #fffdf7;
         color: #151515;
         min-height: 46px;
@@ -131,8 +145,7 @@
         flex: 1;
       }
       button:active {
-        transform: translate(2px, 2px);
-        box-shadow: 1px 1px 0 #151515;
+        transform: translateY(1px);
       }
       button:disabled {
         cursor: wait;
@@ -184,6 +197,49 @@
         overflow-x: auto;
         background: #fffdf7;
       }
+      .keyword {
+        color: #0755b9;
+        font-weight: 600;
+      }
+      .string {
+        color: #246b31;
+      }
+      .function {
+        color: #a43a16;
+      }
+      .number {
+        color: #a43a16;
+      }
+      .comment {
+        color: #65615b;
+      }
+      .examples {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 16px 0 10px;
+        font-size: 13px;
+      }
+      select {
+        font: inherit;
+        padding: 8px;
+        color: inherit;
+        border: 1px solid #151515;
+        border-radius: 5px;
+        background: #fffdf7;
+      }
+      iframe {
+        display: block;
+        width: min(1000px, calc(100vw - 40px));
+        height: 520px;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 1px solid #151515;
+        border-radius: 8px;
+        background: #fffdf7;
+      }
       footer {
         padding-top: 18px;
         border-top: 1px solid #b8b4aa;
@@ -197,8 +253,16 @@
           transform: rotate(352deg);
         }
       }
+      @keyframes cheers {
+        40% {
+          transform: translateY(-10px) rotate(12deg);
+        }
+        70% {
+          transform: rotate(-14deg);
+        }
+      }
       @media (prefers-reduced-motion: reduce) {
-        .card[data-state='loading'] .sticker {
+        .card[data-state] .sticker {
           animation: none;
         }
       }
@@ -214,6 +278,13 @@
         }
         .actions {
           gap: 10px;
+          flex-wrap: wrap;
+        }
+        button.primary {
+          flex-basis: 100%;
+        }
+        .actions > button:not(.primary) {
+          flex: 1;
         }
         button {
           padding: 12px;
@@ -248,22 +319,45 @@
         <a href="https://github.com/nimeshgurung/redux-retry">GitHub ↗</a>
       </nav>
       <h1>Try again.</h1>
-      <p class="intro">Loading. Success. Error. Retry.</p>
+      <p class="intro">Loading, errors and retry. No extra reducers.</p>
       <div id="demo" aria-live="polite"><p>Loading demo…</p></div>
       <details>
         <summary>The JavaScript</summary>
-        <pre><code>import { useRetry } from 'redux-retry/thunk';
+        <pre><code><span class="keyword">import</span> { <span class="function">useRetry</span> } <span class="keyword">from</span> <span class="string">'redux-retry/thunk'</span>;
 
-const [state, retry] = useRetry({
-  thunk: { call: loadPost, args: [1] },
+<span class="keyword">const</span> [state, retry] = <span class="function">useRetry</span>({
+  thunk: { call: checkOrder, args: [<span class="number">42</span>] },
 });
 
-// state.loading · state.success · state.error
+<span class="comment">// state.loading · state.success · state.error
 // state.response · state.retryAttempt
-// retry()</code></pre>
+// retry()</span></code></pre>
+        <div class="examples">
+          <label
+            >Live example
+            <select id="sandbox-choice">
+              <option value="thunk">Thunk</option>
+              <option value="saga">Saga</option>
+            </select></label
+          >
+          <a
+            id="open-sandbox"
+            href="https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Open in CodeSandbox ↗</a
+          >
+        </div>
+        <iframe
+          id="sandbox-example"
+          title="redux-retry Thunk example"
+          src="https://codesandbox.io/embed/cfky67?view=editor+%2B+preview&amp;module=%2Findex.js"
+          loading="lazy"
+          sandbox="allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
+        ></iframe>
       </details>
       <footer>
-        <span>Simulated request · 700 ms</span
+        <span>Simulated order status · 700 ms</span
         ><a href="https://www.npmjs.com/package/redux-retry/v/1.0.0-beta.1">1.0.0-beta.1 ↗</a>
       </footer>
       <noscript><p>Enable JavaScript to run the demo.</p></noscript>
@@ -284,22 +378,37 @@ const [state, retry] = useRetry({
           import('redux-retry/thunk'),
         ]);
         const store = configureStore({ reducer: (state = {}) => state });
-        let failNext = false;
-        const loadPost = (id) => async () => {
+        let failNext = null;
+        const checkOrder = (id) => async () => {
           const shouldFail = failNext;
-          failNext = false;
+          failNext = null;
           await new Promise((resolve) => setTimeout(resolve, 700));
-          if (shouldFail) throw new Error('Request failed. Try again.');
-          return { id, text: 'Your data is here.' };
+          if (shouldFail)
+            throw new Error(
+              shouldFail === 'server' ? '503 Service Unavailable' : 'Network unavailable',
+            );
+          return { id, drink: 'Oat flat white', status: 'Ready at the counter', price: '£3.80' };
         };
         function Demo() {
-          const [state, retry] = useRetry({ thunk: { call: loadPost, args: [1] } });
+          const [state, retry] = useRetry({ thunk: { call: checkOrder, args: [42] } });
           const status = state.loading ? 'loading' : state.error ? 'error' : 'success';
+          const exception =
+            state.exception instanceof Error
+              ? state.exception.message
+              : String(state.exception ?? '');
+          const serverError = exception.startsWith('503');
           const message = state.loading
-            ? 'Loading…'
+            ? 'Asking the barista…'
             : state.error
-              ? 'Request failed. Try again.'
-              : state.response?.text;
+              ? serverError
+                ? 'The server went for coffee.'
+                : 'Wi-Fi left the chat.'
+              : 'Caffeine secured.';
+          const caption = state.loading
+            ? 'Checking order #042'
+            : state.error
+              ? `${serverError ? '503' : 'Network error'} · Couldn’t check your order. Try again.`
+              : `${state.response?.status} · ${state.response?.price}. Personality loading…`;
           return h(
             'div',
             null,
@@ -320,6 +429,7 @@ const [state, retry] = useRetry({
               h(
                 'div',
                 { className: 'result' },
+                h('p', { className: 'order' }, 'ORDER #042 · OAT FLAT WHITE'),
                 h('img', {
                   className: 'sticker',
                   src: './retry-sticker.png',
@@ -328,6 +438,7 @@ const [state, retry] = useRetry({
                   height: 104,
                 }),
                 h('p', { className: 'message' }, message),
+                h('p', { className: 'caption' }, caption),
               ),
               h(
                 'div',
@@ -335,18 +446,29 @@ const [state, retry] = useRetry({
                 h(
                   'button',
                   { className: 'primary', disabled: state.loading, onClick: retry },
-                  'Retry ↻',
+                  state.loading ? 'Checking…' : state.error ? 'Retry ↻' : 'Check again ↻',
                 ),
                 h(
                   'button',
                   {
                     disabled: state.loading,
                     onClick: () => {
-                      failNext = true;
+                      failNext = 'server';
                       retry();
                     },
                   },
-                  'Simulate failure',
+                  '503 once',
+                ),
+                h(
+                  'button',
+                  {
+                    disabled: state.loading,
+                    onClick: () => {
+                      failNext = 'offline';
+                      retry();
+                    },
+                  },
+                  'Offline once',
                 ),
               ),
             ),
@@ -363,6 +485,23 @@ const [state, retry] = useRetry({
             ),
           );
         }
+        const sandboxes = {
+          thunk: {
+            id: 'cfky67',
+            url: 'https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67',
+          },
+          saga: {
+            id: '35jv48',
+            url: 'https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48',
+          },
+        };
+        document.getElementById('sandbox-choice').addEventListener('change', (event) => {
+          const example = sandboxes[event.target.value];
+          const frame = document.getElementById('sandbox-example');
+          frame.src = `https://codesandbox.io/embed/${example.id}?view=editor+%2B+preview&module=%2Findex.js`;
+          frame.title = `redux-retry ${event.target.value === 'thunk' ? 'Thunk' : 'Saga'} example`;
+          document.getElementById('open-sandbox').href = example.url;
+        });
         createRoot(document.getElementById('demo')).render(h(Provider, { store }, h(Demo)));
       } catch (error) {
         document.getElementById('demo').textContent =
