@@ -1,0 +1,103 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #151515;
+  background: #181a18;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+#root {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.loading {
+  text-align: center;
+  color: #f4f1e8;
+}
+.spinner {
+  width: 84px;
+  height: 84px;
+  display: block;
+  margin: 0 auto 12px;
+  animation: spin 1.5s linear infinite;
+}
+.card {
+  color: #151515;
+  width: min(100%, 400px);
+  padding: 28px;
+  border: 2px solid #151515;
+  border-radius: 12px;
+  background: #fffdf7;
+}
+.label {
+  margin: 0 0 12px;
+  color: #55534f;
+  font:
+    12px ui-monospace,
+    monospace;
+}
+h1 {
+  margin: 0 0 16px;
+  font-size: 26px;
+  letter-spacing: -0.7px;
+}
+.response {
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+.response strong {
+  display: block;
+  font-size: 20px;
+}
+.response span {
+  display: block;
+  color: #55534f;
+  font-size: 14px;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #151515;
+  border-radius: 6px;
+  background: #0755ff;
+  color: white;
+  font:
+    650 14px system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+button.secondary {
+  background: transparent;
+  color: #151515;
+}
+button:focus-visible {
+  outline: 3px solid #0755ff;
+  outline-offset: 4px;
+}
+.attempts {
+  margin: 18px 0 0;
+  color: #65615b;
+  font:
+    11px ui-monospace,
+    monospace;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
