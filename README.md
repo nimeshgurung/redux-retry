@@ -1,17 +1,21 @@
-<p align="center"><img src="assets/logos/blue-nodes.png" alt="redux-retry" width="560"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/nimeshgurung/redux-retry/v1.0.0-beta.1/assets/logos/blue-nodes.png" alt="redux-retry" width="560"></p>
 
 # redux-retry
+
+[![Build, types and tests](https://github.com/nimeshgurung/redux-retry/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/nimeshgurung/redux-retry/actions/workflows/ci.yml)
+[![Publish to npm](https://github.com/nimeshgurung/redux-retry/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/nimeshgurung/redux-retry/actions/workflows/release.yml)
+[![npm version](https://img.shields.io/npm/v/redux-retry)](https://www.npmjs.com/package/redux-retry)
 
 Keep loading, success, failure, and manual retry state local to a React component while running
 Redux sagas or thunks. Use the existing `<Retry>` render-prop component or the new `useRetry` hook.
 
-**1.0.0-beta.1** targets React 18/19, React Redux 9, and Redux 5. See [migration notes](CHANGELOG.md).
-The beta is published under npm's `next` tag; `latest` remains on the stable release.
+**1.0.0** targets React 18/19, React Redux 9, and Redux 5. See [migration notes](CHANGELOG.md).
+Stable releases use npm's `latest` tag; beta releases use `next`.
 
 ## Install
 
 ```sh
-npm install redux-retry@1.0.0-beta.1 react-redux redux
+npm install redux-retry react-redux redux
 # Install the middleware you use:
 npm install redux-saga
 # Or use Redux Toolkit (which includes thunk middleware):
@@ -131,7 +135,15 @@ The default export remains Provider-connected. The named `Retry` export accepts 
 Component applications. The library does not access the DOM; native app execution is a separate check
 from web browser verification.
 
-## Runnable examples and the release gate
+## Demo
+
+The single-page [loading and retry demo](docs/index.html) loads the published package directly as
+JavaScript modules. Serve the repo with `python3 -m http.server 8000` and open
+`http://localhost:8000/docs/`. It demonstrates loading, success, a simulated failure, and recovery
+with `useRetry`. The request is simulated so the demo does not rely on a third-party API.
+To host it on GitHub Pages, use the `master` branch and `/docs` folder after merge.
+
+## Compatibility examples and the release gate
 
 ```sh
 npm ci
@@ -155,8 +167,7 @@ the original class component, render prop, visible states, and direct `onClick={
 They update React mounting, middleware imports, dependencies, and the API endpoint. The direct
 [JSONPlaceholder API](https://jsonplaceholder.typicode.com/) replaces the broken CORS proxy; its
 `body` is mapped to the original `response.text` contract. Both committed example manifests also pin
-`redux-retry` to exactly `1.0.0-beta.1`. Saved hosted manifests, source, and screenshots are in
-[verification](verification).
+`redux-retry` to exactly `1.0.0-beta.1`. Generated reports and screenshots are retained as CI artifacts rather than source files.
 
 **E2E verification metric: passed required scenarios / total required scenarios = 100%.** Both original
 examples must pass; any failure or skipped required case fails the gate. There are 60 deterministic
@@ -186,15 +197,19 @@ The minimatch override pins the patched major for the lint toolchain and is cove
 
 ## Release
 
-The publish workflow is manual and gated on CI plus live API checks. Configure the npm trusted
-publisher for `.github/workflows/release.yml` and the `npm` GitHub environment before dispatching it.
-Publishing uses OIDC provenance and the `next` tag. Changing the package version or running verification
-does not publish a release. Review [CHANGELOG.md](CHANGELOG.md) before publishing.
+Merge the release changes into `master` and wait for CI to pass. Then run **Publish to npm**
+from `master` in GitHub Actions. It reruns the compatibility gate, checks the live API, and
+publishes the tested tarball with provenance. Stable versions use `latest`; prereleases use
+`next`. An already-published version is rejected. Merging alone does not publish to npm.
+
+Configure npm trusted publishing for `.github/workflows/release.yml` and the `npm` GitHub
+environment before the first workflow publication. The README logo and live status badges
+will be included in the next npm publication. Review [CHANGELOG.md](CHANGELOG.md) before releasing.
 
 ## Artwork
 
-The selected blue-nodes sticker and five variations are in [assets/logos](assets/logos). Images were
-created with the built-in image generation tool; prompts are retained alongside them.
+The selected blue-nodes sticker is the project's logo. Only the selected image is tracked and
+included in the npm package.
 
 ## License
 

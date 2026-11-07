@@ -2,6 +2,9 @@ dist/
 test-results/
 playwright-report/
 .compat/
+verification/
+assets/logos/*
+!assets/logos/blue-nodes.png
 
 # Created by https://www.gitignore.io/api/node,macos,windows,webstorm,sublimetext,visualstudiocode
 

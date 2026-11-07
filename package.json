@@ -1,6 +1,6 @@
 {
   "name": "redux-retry",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "Redux retry for easy state management of async calls",
   "main": "./dist/index.cjs",
   "repository": {
@@ -19,7 +19,7 @@
     "test:compat": "node scripts/compat.mjs",
     "test:live": "playwright test --config playwright.live.config.ts",
     "lint": "eslint src tests scripts *.ts *.mjs",
-    "format:check": "prettier --check src tests scripts examples *.ts *.mjs package.json tsconfig.json README.md CHANGELOG.md .github assets/logos/*.json",
+    "format:check": "prettier --check src tests scripts examples *.ts *.mjs package.json tsconfig.json README.md CHANGELOG.md .github docs/index.html",
     "tsc:check": "tsc --noEmit",
     "check:package": "publint && attw --pack --profile node16",
     "verify": "npm run lint && npm test && npm run tsc:check && npm run check:package",
@@ -82,7 +82,8 @@
     "dist",
     "LICENSE",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "assets/logos/blue-nodes.png"
   ],
   "exports": {
     ".": {
@@ -126,8 +127,7 @@
     }
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "next"
+    "access": "public"
   },
   "overrides": {
     "minimatch": "^11.0.1"

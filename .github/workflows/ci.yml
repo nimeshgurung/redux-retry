@@ -1,6 +1,7 @@
-name: Verify beta
+name: CI
 on:
   push:
+    branches: [master]
   pull_request:
   workflow_call:
 
@@ -9,6 +10,7 @@ permissions:
 
 jobs:
   quality:
+    name: Build, types and tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

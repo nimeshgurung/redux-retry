@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.0 (unreleased)
+
+Includes the changes verified in 1.0.0-beta.1, plus the corrected README logo, status badges,
+a single-page browser demo, and a version-aware npm publishing workflow.
+
 ## 1.0.0-beta.1
 
 - Add `useRetry`, returning the same local request state and retry handler as `<Retry>`.
