@@ -6,21 +6,19 @@ Keep loading, success, failure, and manual retry state local to a React componen
 Redux sagas or thunks. Use the existing `<Retry>` render-prop component or the new `useRetry` hook.
 
 **1.0.0-beta.1** targets React 18/19, React Redux 9, and Redux 5. See [migration notes](CHANGELOG.md).
-This is a beta: npm's `next` tag will be used when it is published.
+The beta is published under npm's `next` tag; `latest` remains on the stable release.
 
 ## Install
 
-After the beta is published:
-
 ```sh
-npm install redux-retry@next react-redux redux
+npm install redux-retry@1.0.0-beta.1 react-redux redux
 # Install the middleware you use:
 npm install redux-saga
 # Or use Redux Toolkit (which includes thunk middleware):
 npm install @reduxjs/toolkit
 ```
 
-For local verification before publication, install the `.tgz` produced by `npm pack`.
+For local package verification, install the `.tgz` produced by `npm pack`.
 
 ## Existing component: sagas
 
@@ -145,16 +143,18 @@ Open `/saga/`, `/thunk/`, or `/use-retry/`. Add `?store=toolkit` to either origi
 to use Redux Toolkit with its default checks enabled.
 
 The [original saga sandbox](https://codesandbox.io/s/04w2m9kw00) and
-[original thunk sandbox](https://codesandbox.io/s/9lz0kv4xo4) are the regression baselines. Their source
-was inspected in the browser. Both currently use redux-retry 0.0.2 and an obsolete proxy API.
+[original thunk sandbox](https://codesandbox.io/s/9lz0kv4xo4) are the regression baselines.
+The updated [saga sandbox](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48) and
+[thunk sandbox](https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67) both pin the published
+`redux-retry@1.0.0-beta.1`. Both passed a fresh page load and manual retry after publication.
+CodeSandbox created forks in the signed-in workspace because the originals were not editable.
 The committed [saga](examples/saga/index.jsx) and [thunk](examples/thunk/index.jsx) reproductions keep
 the original class component, render prop, visible states, and direct `onClick={retry}` behavior.
 They update React mounting, middleware imports, dependencies, and the API endpoint. The direct
 [JSONPlaceholder API](https://jsonplaceholder.typicode.com/) replaces the broken CORS proxy; its
-`body` is mapped to the original `response.text` contract. Hosted sandboxes are not automatically
-updated by these local changes. Both example manifests pin `redux-retry` to exactly
-`1.0.0-beta.1`; import the example folders into CodeSandbox after that version is published, and
-update the original hosted sandboxes to that same version. Do not leave them on `latest` or 0.0.2.
+`body` is mapped to the original `response.text` contract. Both committed example manifests also pin
+`redux-retry` to exactly `1.0.0-beta.1`. Saved hosted manifests, source, and screenshots are in
+[verification](verification).
 
 **E2E verification metric: passed required scenarios / total required scenarios = 100%.** Both original
 examples must pass; any failure or skipped required case fails the gate. There are 60 deterministic

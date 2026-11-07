@@ -1,0 +1,16 @@
+{
+  "name": "basic-redux-saga",
+  "version": "1.0.0",
+  "description": "Basic Redux Saga setup with take/put/call effects.",
+  "keywords": [],
+  "homepage": "https://codesandbox.io/s/rlr3qm5pxn",
+  "main": "index.js",
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-redux": "9.3.1",
+    "redux": "5.0.1",
+    "redux-retry": "1.0.0-beta.1",
+    "redux-saga": "1.5.1"
+  }
+}

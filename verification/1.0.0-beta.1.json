@@ -23,21 +23,12 @@
   "metro": {
     "passed": 12,
     "total": 12,
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "scope": "Package bundling only; native UI not executed"
   },
   "consumerTypes": {
-    "compilers": [
-      "6.0.3",
-      "7.0.2"
-    ],
-    "resolution": [
-      "Bundler",
-      "NodeNext"
-    ],
+    "compilers": ["6.0.3", "7.0.2"],
+    "resolution": ["Bundler", "NodeNext"],
     "exactInference": true,
     "invalidArgumentsRejected": true,
     "explicitAnyTypes": 0
@@ -135,13 +126,29 @@
     "thunk": "https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67",
     "apiFixed": true,
     "manualRetryVerified": true,
-    "currentPackage": "0.0.2",
-    "afterPublicationPackage": "1.0.0-beta.1",
-    "note": "CodeSandbox created forks in the signed-in workspace; original sandboxes were not editable."
+    "currentPackage": "1.0.0-beta.1",
+    "note": "CodeSandbox created forks in the signed-in workspace; original sandboxes were not editable.",
+    "coldReloadVerified": true,
+    "attemptBeforeRetry": 0,
+    "attemptAfterRetry": 1,
+    "evidence": [
+      "published-saga.jpg",
+      "published-thunk.jpg",
+      "sandbox-saga-package.json",
+      "sandbox-thunk-package.json",
+      "sandbox-saga.js",
+      "sandbox-thunk.js"
+    ]
   },
   "publication": {
-    "published": false,
+    "published": true,
     "tag": "next",
-    "trustedPublisherConfigurationRequired": true
+    "latest": "0.0.7",
+    "npm": "https://www.npmjs.com/package/redux-retry/v/1.0.0-beta.1",
+    "tarball": "https://registry.npmjs.org/redux-retry/-/redux-retry-1.0.0-beta.1.tgz",
+    "artifactHashMatches": true,
+    "sourceCommit": "75d18ee",
+    "gitTag": "v1.0.0-beta.1",
+    "pullRequest": "https://github.com/nimeshgurung/redux-retry/pull/47"
   }
 }
