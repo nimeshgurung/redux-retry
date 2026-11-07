@@ -71,11 +71,31 @@
         color: inherit;
         text-underline-offset: 4px;
       }
+      .intro {
+        margin-bottom: 24px;
+      }
       .tagline {
-        margin: 0 0 22px;
+        margin: 0 0 10px;
+        font-family: Arial, sans-serif;
+        font-size: clamp(24px, 3vw, 34px);
+        font-style: italic;
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.1;
+        text-wrap: balance;
+      }
+      .description {
+        max-width: 64ch;
+        margin: 0;
         color: #c8c7bd;
-        font-size: 15px;
-        line-height: 1.5;
+        font-size: 16px;
+        line-height: 1.6;
+        text-wrap: pretty;
+      }
+      .description code {
+        color: #f4f1e8;
+        font-family: ui-monospace, monospace;
+        font-size: 0.9em;
       }
       .wordmark {
         display: block;
@@ -188,7 +208,13 @@
             height="109"
         /></a>
       </nav>
-      <p class="tagline">Stop rewriting loading, error, and retry state for every Redux request.</p>
+      <section class="intro" aria-label="About redux-retry">
+        <h1 class="tagline">Async requests. Less Redux boilerplate.</h1>
+        <p class="description">
+          Use <code>Retry</code> or <code>useRetry</code> to handle loading, success, and errors
+          with Redux Saga or Thunk. When a request fails, give users a way to try again.
+        </p>
+      </section>
       <div class="examples">
         <div class="modes" role="group" aria-label="Choose an example">
           <button class="mode" type="button" data-example="thunk" aria-pressed="true">
