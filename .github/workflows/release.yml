@@ -1,0 +1,45 @@
+name: Publish to npm
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/ci.yml
+  publish:
+    needs: verify
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          package-manager-cache: false
+      - run: npm ci
+      - name: Check release version
+        id: release
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const { name, version } = JSON.parse(readFileSync('package.json', 'utf8'));
+          const versions = JSON.parse(execFileSync('npm', ['view', name, 'versions', '--json'], { encoding: 'utf8' }));
+          if (versions.includes(version)) throw new Error(`${name}@${version} is already published. Bump the version first.`);
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ntag=${version.includes('-') ? 'next' : 'latest'}\n`);
+          JS
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:compat -- --react=19 --e2e --chromium-only --live --metro
+      - name: Publish verified package
+        env:
+          VERSION: ${{ steps.release.outputs.version }}
+          DIST_TAG: ${{ steps.release.outputs.tag }}
+        run: npm publish ".compat/redux-retry-$VERSION.tgz" --tag "$DIST_TAG" --provenance

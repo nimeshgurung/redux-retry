@@ -1,0 +1,21 @@
+{
+  "name": "redux-retry-saga-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "vite --host 0.0.0.0",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-redux": "9.3.1",
+    "redux": "5.0.1",
+    "redux-retry": "1.0.0",
+    "@reduxjs/toolkit": "2.14.0",
+    "redux-saga": "1.5.1"
+  },
+  "devDependencies": {
+    "vite": "8.3.6"
+  }
+}
