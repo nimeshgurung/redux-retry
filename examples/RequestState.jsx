@@ -9,17 +9,24 @@ export function RequestState({ state, retry, failNextRequest }) {
           width="84"
           height="84"
         />
-        <p>Loading…</p>
+        <p>Loading profile…</p>
       </div>
     );
   if (!state.success && !state.error) return null;
   return (
     <article className="card" aria-label={state.error ? 'Request failed' : 'Request successful'}>
-      <p className="label">{state.error ? 'Error' : 'Success'}</p>
+      <p className="label">{state.error ? 'Error' : 'Profile loaded'}</p>
       <h1>{state.error ? 'The internet tripped.' : 'Well, that worked.'}</h1>
-      <p className="response" data-testid={state.success ? 'response' : undefined}>
-        {state.error ? 'Something went wrong. Please try again.' : state.response.text}
-      </p>
+      <div className="response" data-testid={state.success ? 'response' : undefined}>
+        {state.error ? (
+          'Something went wrong. Please try again.'
+        ) : (
+          <>
+            <strong>{state.response.text}</strong>
+            {state.response.email && <span>{state.response.email}</span>}
+          </>
+        )}
+      </div>
       <div className="actions">
         <button type="button" onClick={retry}>
           Retry

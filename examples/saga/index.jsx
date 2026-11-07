@@ -6,11 +6,11 @@ import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import { call, all } from 'redux-saga/effects';
 import Retry, { retryRoot } from 'redux-retry';
-import { getPost, reducer, failNextRequest } from './api.js';
+import { getProfile, reducer, failNextRequest } from './api.js';
 import { RequestState } from '../RequestState.jsx';
 
-const loadPost = function* (id) {
-  return yield call(getPost, id);
+const loadProfile = function* (id) {
+  return yield call(getProfile, id);
 };
 const root = function* () {
   yield all([retryRoot()]);
@@ -25,7 +25,7 @@ sagaMiddleware.run(root);
 export default class RetryExample extends React.Component {
   render() {
     return (
-      <Retry saga={{ call: loadPost, args: [1] }}>
+      <Retry saga={{ call: loadProfile, args: [1] }}>
         {(state, retry) => (
           <RequestState state={state} retry={retry} failNextRequest={failNextRequest} />
         )}

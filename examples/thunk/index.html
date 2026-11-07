@@ -9,7 +9,7 @@
       :root {
         font-family: system-ui, sans-serif;
         color: #151515;
-        background: #f4f1e8;
+        background: #181a18;
       }
       * {
         box-sizing: border-box;
@@ -25,7 +25,7 @@
       }
       .loading {
         text-align: center;
-        color: #55534f;
+        color: #f4f1e8;
       }
       .spinner {
         width: 84px;
@@ -35,6 +35,7 @@
         animation: spin 1.5s linear infinite;
       }
       .card {
+        color: #151515;
         width: min(100%, 400px);
         padding: 28px;
         border: 2px solid #151515;
@@ -56,6 +57,15 @@
       .response {
         margin: 0 0 24px;
         line-height: 1.6;
+      }
+      .response strong {
+        display: block;
+        font-size: 20px;
+      }
+      .response span {
+        display: block;
+        color: #55534f;
+        font-size: 14px;
       }
       .actions {
         display: flex;

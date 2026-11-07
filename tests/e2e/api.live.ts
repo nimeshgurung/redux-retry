@@ -11,11 +11,11 @@ for (const example of ['saga', 'thunk']) {
       timeout: 20000,
     });
     await expect(page.getByText('Error', { exact: true })).toHaveCount(0);
-    await expect(page.getByTestId('response')).toContainText('quia et suscipit');
+    await expect(page.getByTestId('response')).toContainText('Leanne Graham');
     await page.getByRole('button', { name: 'Retry', exact: true }).click();
     await expect(page.getByTestId('attempt')).toHaveText('1', { timeout: 20000 });
     await expect(page.getByText('Error', { exact: true })).toHaveCount(0);
-    await expect(page.getByTestId('response')).toContainText('quia et suscipit');
+    await expect(page.getByTestId('response')).toContainText('Leanne Graham');
     expect(failures).toEqual([]);
   });
 }

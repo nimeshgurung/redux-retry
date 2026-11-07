@@ -37,14 +37,16 @@ import createSagaMiddleware from 'redux-saga';
 import { call } from 'redux-saga/effects';
 import Retry, { retryRoot } from 'redux-retry';
 
-async function getPost(id: number): Promise<{ body: string }> {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+async function getProfile(id: number): Promise<{ name: string; email: string }> {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
   if (!response.ok) throw new Error(`Request failed: ${response.status}`);
   return response.json();
 }
 
-function* loadPost(id: number): Generator<unknown, { body: string }, { body: string }> {
-  return yield call(getPost, id);
+function* loadProfile(
+  id: number,
+): Generator<unknown, { name: string; email: string }, { name: string; email: string }> {
+  return yield call(getProfile, id);
 }
 
 const saga = createSagaMiddleware();
@@ -57,12 +59,12 @@ saga.run(retryRoot);
 export function App() {
   return (
     <Provider store={store}>
-      <Retry saga={{ call: loadPost, args: [1] }}>
+      <Retry saga={{ call: loadProfile, args: [1] }}>
         {(state, retry) => (
           <div>
             {state.loading && <p>Loading…</p>}
             {state.error && <p>Error: {String(state.exception)}</p>}
-            {state.success && <p>{state.response?.body}</p>}
+            {state.success && <p>{state.response?.name}</p>}
             <p>Retries: {state.retryAttempt}</p>
             <button onClick={retry}>Retry</button>
           </div>
@@ -82,20 +84,20 @@ Both `useRetry` and the default component require a React Redux `<Provider>`.
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { useRetry } from 'redux-retry/thunk';
 
-const loadPost = createAsyncThunk('posts/load', async (id: number) => {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+const loadProfile = createAsyncThunk('profiles/load', async (id: number) => {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
   if (!response.ok) throw new Error(`Request failed: ${response.status}`);
-  return response.json() as Promise<{ body: string }>;
+  return response.json() as Promise<{ name: string; email: string }>;
 });
 
-export function Post() {
-  const [state, retry] = useRetry({ thunk: { call: loadPost, args: [1] } });
+export function Profile() {
+  const [state, retry] = useRetry({ thunk: { call: loadProfile, args: [1] } });
   return (
     <div>
       {state.loading && <p>Loading…</p>}
       {state.error && <p>Error: {String(state.exception)}</p>}
-      {state.success && <p>{state.response?.body}</p>}
-      <button onClick={() => retry([2])}>Retry with post 2</button>
+      {state.success && <p>{state.response?.name}</p>}
+      <button onClick={() => retry([2])}>Load profile 2</button>
     </div>
   );
 }
@@ -103,7 +105,7 @@ export function Post() {
 
 Regular thunks work too, including synchronous returns and middleware `extraArgument` injection.
 `createAsyncThunk` results are unwrapped: fulfilled payloads become `response`; rejected values become
-`exception`. For the render-prop API, use `<Retry thunk={{ call: loadPost, args: [1] }}>` as before.
+`exception`. For the render-prop API, use `<Retry thunk={{ call: loadProfile, args: [1] }}>` as before.
 `useRetry({ saga: { call, args } })` uses the same saga bridge as the component.
 
 ## API and behavior
@@ -140,7 +142,7 @@ from web browser verification.
 ## Demo
 
 The single-page [loading and retry demo](docs/index.html) embeds the runnable Saga and Thunk
-CodeSandbox examples. Each shows a spinner, a response card on success, or an error card with
+CodeSandbox examples. Each shows a spinner, a profile card on success, or an error card with
 Retry on failure. Choose **Try an error** inside the preview to test recovery.
 Serve the repo with `python3 -m http.server 8000` and open `http://localhost:8000/docs/`.
 To host it on GitHub Pages, use the `master` branch and `/docs` folder after merge.
@@ -168,7 +170,7 @@ The committed [saga](examples/saga/index.jsx) and [thunk](examples/thunk/index.j
 the original class component, render prop, visible states, and direct `onClick={retry}` behavior.
 They update React mounting, middleware imports, dependencies, and the API endpoint. The direct
 [JSONPlaceholder API](https://jsonplaceholder.typicode.com/) replaces the broken CORS proxy; its
-`body` is mapped to the original `response.text` contract. Both committed example manifests also pin
+profile `name` is mapped to the original `response.text` contract. Both committed example manifests also pin
 `redux-retry` to exactly `1.0.0-beta.1`. Generated reports and screenshots are retained as CI artifacts rather than source files.
 
 **E2E verification metric: passed required scenarios / total required scenarios = 100%.** Both original

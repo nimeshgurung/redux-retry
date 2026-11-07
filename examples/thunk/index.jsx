@@ -5,10 +5,10 @@ import { legacy_createStore, applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import Retry from 'redux-retry/thunk';
 import { thunk } from 'redux-thunk';
-import { getPost, reducer, failNextRequest } from './api.js';
+import { getProfile, reducer, failNextRequest } from './api.js';
 import { RequestState } from '../RequestState.jsx';
 
-const loadPostThunk = (id) => () => getPost(id);
+const loadProfileThunk = (id) => () => getProfile(id);
 const classic = new URLSearchParams(location.search).get('store') === 'classic';
 const store = classic
   ? legacy_createStore(reducer, applyMiddleware(thunk))
@@ -17,7 +17,7 @@ const store = classic
 export default class RetryExample extends React.Component {
   render() {
     return (
-      <Retry thunk={{ call: loadPostThunk, args: [1] }}>
+      <Retry thunk={{ call: loadProfileThunk, args: [1] }}>
         {(state, retry) => (
           <RequestState state={state} retry={retry} failNextRequest={failNextRequest} />
         )}

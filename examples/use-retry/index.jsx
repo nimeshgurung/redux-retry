@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { configureStore, createAsyncThunk } from '@reduxjs/toolkit';
 import { useRetry } from 'redux-retry/thunk';
-import { getPost, reducer } from '../thunk/api.js';
+import { getProfile, reducer } from '../thunk/api.js';
 
 const store = configureStore({ reducer });
-const getPostThunk = createAsyncThunk('example/post', getPost);
+const getProfileThunk = createAsyncThunk('example/profile', getProfile);
 function Example() {
-  const [state, retry] = useRetry({ thunk: { call: getPostThunk, args: [1] } });
+  const [state, retry] = useRetry({ thunk: { call: getProfileThunk, args: [1] } });
   if (state.loading)
     return (
       <p role="status" aria-label="Loading">

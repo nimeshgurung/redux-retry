@@ -32,10 +32,10 @@ for (const scenario of scenarios) {
       let pending = new Promise<void>((resolve) => {
         release = resolve;
       });
-      await page.route('https://jsonplaceholder.typicode.com/posts/1', async (route) => {
+      await page.route('https://jsonplaceholder.typicode.com/users/1', async (route) => {
         const attempt = ++count;
         await pending;
-        await route.fulfill({ json: { body: `Response ${attempt}` } });
+        await route.fulfill({ json: { name: `Response ${attempt}`, email: 'demo@example.test' } });
       });
       await page.goto(scenario.path);
       await expect(page.getByRole('status', { name: 'Loading', exact: true })).toBeVisible();
@@ -59,12 +59,12 @@ for (const scenario of scenarios) {
       page,
     }) => {
       let count = 0;
-      await page.route('https://jsonplaceholder.typicode.com/posts/1', async (route) => {
+      await page.route('https://jsonplaceholder.typicode.com/users/1', async (route) => {
         count += 1;
         await route.fulfill(
           count === 1
             ? { status: 503, json: { error: 'Service unavailable' } }
-            : { json: { body: 'Recovered response' } },
+            : { json: { name: 'Recovered response', email: 'demo@example.test' } },
         );
       });
       await page.goto(scenario.path);

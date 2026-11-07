@@ -11,8 +11,8 @@
     <style>
       :root {
         font-family: system-ui, sans-serif;
-        color: #151515;
-        background: #f4f1e8;
+        color: #f4f1e8;
+        background: #181a18;
       }
       * {
         box-sizing: border-box;
@@ -45,28 +45,64 @@
         height: auto;
       }
       .examples {
-        margin-bottom: 12px;
+        margin: 6px 0 22px;
         font-size: 13px;
       }
-      select {
-        margin-left: 6px;
-        font: inherit;
-        padding: 8px;
+      .modes {
+        display: flex;
+        gap: 14px;
+      }
+      .mode {
+        display: grid;
+        gap: 4px;
+        min-width: 152px;
+        padding: 12px 22px;
         color: inherit;
-        border: 1px solid #151515;
-        border-radius: 5px;
-        background: #fffdf7;
+        border: 2px solid #f4f1e8;
+        border-radius: 9px 14px 10px 12px;
+        background: #242724;
+        text-align: left;
+        cursor: pointer;
+        transform: rotate(-2deg);
+        transition:
+          background-color 160ms,
+          color 160ms,
+          transform 160ms;
+      }
+      .mode + .mode {
+        transform: rotate(2deg);
+      }
+      .mode strong {
+        font:
+          italic 850 28px/1 system-ui,
+          sans-serif;
+        letter-spacing: -1px;
+      }
+      .mode span {
+        font:
+          11px ui-monospace,
+          monospace;
+      }
+      .mode[aria-pressed='true'] {
+        color: #fff;
+        background: #0755ff;
+      }
+      .mode:hover {
+        transform: translateY(-3px) rotate(0deg);
+      }
+      .mode:active {
+        transform: translateY(1px) rotate(0deg);
       }
       iframe {
         display: block;
         width: 100%;
         height: 760px;
-        border: 1px solid #151515;
+        border: 1px solid #5c615b;
         border-radius: 8px;
-        background: #fffdf7;
+        background: #181a18;
       }
       a:focus-visible,
-      select:focus-visible {
+      button:focus-visible {
         outline: 3px solid #0755ff;
         outline-offset: 4px;
       }
@@ -75,10 +111,29 @@
           width: calc(100% - 24px);
         }
         .examples {
-          align-items: end;
+          align-items: start;
+          flex-direction: column;
+          gap: 20px;
+        }
+        .modes {
+          width: 100%;
+        }
+        .mode {
+          min-width: 0;
+          flex: 1;
+          padding: 12px 16px;
         }
         iframe {
           height: 660px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mode {
+          transition: none;
+        }
+        .mode:hover,
+        .mode:active {
+          transform: none;
         }
       }
     </style>
@@ -96,13 +151,14 @@
         /></a>
       </nav>
       <div class="examples">
-        <label
-          >Example
-          <select id="sandbox-choice">
-            <option value="thunk">Thunk</option>
-            <option value="saga">Saga</option>
-          </select></label
-        >
+        <div class="modes" role="group" aria-label="Choose an example">
+          <button class="mode" type="button" data-example="thunk" aria-pressed="true">
+            <strong>Thunk</strong><span>async / await</span>
+          </button>
+          <button class="mode" type="button" data-example="saga" aria-pressed="false">
+            <strong>Saga</strong><span>yield / call</span>
+          </button>
+        </div>
         <a
           id="open-sandbox"
           href="https://codesandbox.io/p/sandbox/basic-redux-saga-forked-cfky67"
@@ -129,13 +185,19 @@
           url: 'https://codesandbox.io/p/sandbox/basic-redux-saga-forked-35jv48',
         },
       };
-      document.getElementById('sandbox-choice').addEventListener('change', (event) => {
-        const example = sandboxes[event.target.value];
-        const frame = document.getElementById('sandbox-example');
-        frame.src = `https://codesandbox.io/embed/${example.id}?view=preview&module=%2Findex.js&hidenavigation=1`;
-        frame.title = `redux-retry ${event.target.value === 'thunk' ? 'Thunk' : 'Saga'} example`;
-        document.getElementById('open-sandbox').href = example.url;
-      });
+      const modes = [...document.querySelectorAll('[data-example]')];
+      for (const mode of modes) {
+        mode.addEventListener('click', () => {
+          if (mode.getAttribute('aria-pressed') === 'true') return;
+          const kind = mode.dataset.example;
+          const example = sandboxes[kind];
+          for (const button of modes) button.setAttribute('aria-pressed', String(button === mode));
+          const frame = document.getElementById('sandbox-example');
+          frame.src = `https://codesandbox.io/embed/${example.id}?view=preview&module=%2Findex.js&hidenavigation=1`;
+          frame.title = `redux-retry ${kind === 'thunk' ? 'Thunk' : 'Saga'} example`;
+          document.getElementById('open-sandbox').href = example.url;
+        });
+      }
     </script>
   </body>
 </html>
