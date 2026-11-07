@@ -1,17 +1,17 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { legacy_createStore, applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import Retry from 'redux-retry/thunk';
 import { thunk } from 'redux-thunk';
 import { getPost, reducer } from './api.js';
 
 const getCatFactsThunk = (id) => () => getPost(id);
-const toolkit = new URLSearchParams(location.search).get('store') === 'toolkit';
-const store = toolkit
-  ? configureStore({ reducer })
-  : createStore(reducer, compose(applyMiddleware(thunk)));
+const classic = new URLSearchParams(location.search).get('store') === 'classic';
+const store = classic
+  ? legacy_createStore(reducer, applyMiddleware(thunk))
+  : configureStore({ reducer });
 
 export default class RetryExample extends React.Component {
   render() {

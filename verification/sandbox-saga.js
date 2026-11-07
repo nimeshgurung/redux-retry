@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware, compose } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import { call, all } from "redux-saga/effects";
 import Retry, { retryRoot } from "redux-retry";
@@ -14,23 +14,26 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-const getCatFacts = function*(id) {
+const getCatFacts = function* (id) {
   const response = yield call(
     fetch,
-    "https://jsonplaceholder.typicode.com/posts/" +
-      id
+    "https://jsonplaceholder.typicode.com/posts/" + id
   );
   if (!response.ok) throw new Error(`Request failed: ${response.status}`);
   const post = yield response.json();
   return { text: post.body };
 };
 
-const root = function*() {
+const root = function* () {
   yield all([retryRoot()]);
 };
 
 const sagaMiddleware = createSagaMiddleware();
-const store = createStore(reducer, compose(applyMiddleware(sagaMiddleware)));
+const store = configureStore({
+  reducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(sagaMiddleware),
+});
 sagaMiddleware.run(root);
 
 export default class RetryExample extends React.Component {

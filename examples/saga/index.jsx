@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { legacy_createStore, applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import { call, all } from 'redux-saga/effects';
@@ -15,10 +15,10 @@ const root = function* () {
   yield all([retryRoot()]);
 };
 const sagaMiddleware = createSagaMiddleware();
-const toolkit = new URLSearchParams(location.search).get('store') === 'toolkit';
-const store = toolkit
-  ? configureStore({ reducer, middleware: (getDefault) => getDefault().concat(sagaMiddleware) })
-  : createStore(reducer, compose(applyMiddleware(sagaMiddleware)));
+const classic = new URLSearchParams(location.search).get('store') === 'classic';
+const store = classic
+  ? legacy_createStore(reducer, applyMiddleware(sagaMiddleware))
+  : configureStore({ reducer, middleware: (getDefault) => getDefault().concat(sagaMiddleware) });
 sagaMiddleware.run(root);
 
 export default class RetryExample extends React.Component {

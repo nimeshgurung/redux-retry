@@ -137,8 +137,11 @@
       "sandbox-saga-package.json",
       "sandbox-thunk-package.json",
       "sandbox-saga.js",
-      "sandbox-thunk.js"
-    ]
+      "sandbox-thunk.js",
+      "toolkit-saga.jpg",
+      "toolkit-thunk.jpg"
+    ],
+    "storeSetup": "Redux Toolkit configureStore with default middleware checks"
   },
   "publication": {
     "published": true,

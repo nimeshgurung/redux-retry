@@ -1,9 +1,8 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { createStore, applyMiddleware, compose } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import Retry from "redux-retry";
-import { thunk } from "redux-thunk";
 
 const initialState = {};
 
@@ -25,7 +24,7 @@ const getCatFactsThunk = function (id) {
   };
 };
 
-const store = createStore(reducer, compose(applyMiddleware(thunk)));
+const store = configureStore({ reducer });
 
 export default class RetryExample extends React.Component {
   render() {

@@ -135,12 +135,14 @@ from web browser verification.
 
 ```sh
 npm ci
-npm test
+npm run test:compat -- --e2e
+cd .compat/react-19
 npx vite examples --config examples/vite.config.ts
 ```
 
-Open `/saga/`, `/thunk/`, or `/use-retry/`. Add `?store=toolkit` to either original component example
-to use Redux Toolkit with its default checks enabled.
+Open `/saga/`, `/thunk/`, or `/use-retry/`. All examples use Redux Toolkit’s `configureStore`
+with its default checks enabled. Add `?store=classic` to either component example to verify
+compatibility with Redux’s `legacy_createStore` API.
 
 The [original saga sandbox](https://codesandbox.io/s/04w2m9kw00) and
 [original thunk sandbox](https://codesandbox.io/s/9lz0kv4xo4) are the regression baselines.

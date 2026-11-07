@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 const scenarios = [
-  { name: 'original saga / classic Redux', path: '/saga/' },
-  { name: 'original thunk / classic Redux', path: '/thunk/' },
-  { name: 'original saga / RTK default checks', path: '/saga/?store=toolkit' },
-  { name: 'original thunk / RTK default checks', path: '/thunk/?store=toolkit' },
+  { name: 'original saga / classic Redux', path: '/saga/?store=classic' },
+  { name: 'original thunk / classic Redux', path: '/thunk/?store=classic' },
+  { name: 'original saga / RTK default checks', path: '/saga/' },
+  { name: 'original thunk / RTK default checks', path: '/thunk/' },
   { name: 'useRetry / createAsyncThunk', path: '/use-retry/' },
 ];
 
