@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.8 (legacy)
+
+- Refresh the npm README with the project logo, GitHub Actions badge, and a working example API.
+- Keep all runtime files, type declarations, entry points, dependencies, and peer requirements identical to `0.0.7`.
+- Publish on `latest` for existing React 16 / Redux 4 consumers; the modern `1.0.1` release stays on `next`.
+- Retire the obsolete React Native 0.58 starter and its Yarn lockfile. Keep the current examples and Metro checks.
+
 ## 1.0.1
 
 - Simplify the README while keeping the live demo and Saga/Thunk quick starts.

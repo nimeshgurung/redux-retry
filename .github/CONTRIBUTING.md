@@ -39,10 +39,25 @@ example to try Redux's `legacy_createStore`.
 After merging into `master` and passing CI, run **Publish to npm** from GitHub
 Actions. It verifies compatibility and the live API, then publishes the tested
 tarball with provenance. Select the npm channel explicitly; the default is `next`.
-Use `next` for the modern 1.x rollout, leaving `latest` on `0.0.7`. Choose `latest`
+Use `next` for the modern 1.x rollout, leaving `latest` on the legacy `0.0.x` line. Choose `latest`
 only when a new version should become the default install. Prereleases must use `next`.
 Published versions cannot be reused. npm trusted publishing must be configured
 for `.github/workflows/release.yml` and the `npm` environment.
 
 Review [CHANGELOG.md](../CHANGELOG.md) before releasing, then update and verify both
 hosted sandboxes against the published version.
+
+### Legacy documentation release
+
+The `legacy` option publishes `0.0.8` under `latest`. It downloads the integrity-pinned
+`0.0.7` archive, replaces its README, and adds the logo. The JavaScript, declarations,
+entry point, dependencies, and peer requirements must remain unchanged.
+
+Run `npm run test:legacy` to create and validate `.compat/legacy/redux-retry-0.0.8.tgz`.
+CI compares the packed files and exercises both archives with React 16 / Redux 4,
+including Saga and Thunk loading, errors, manual retry, batches, loaders, and skipped mount.
+The modern package version stays `1.0.1` on `next`.
+
+The obsolete React Native 0.58 starter has been retired. Use the browser examples
+and Metro bundling checks described above. Its old Yarn dependency PRs are superseded
+by the current npm lockfile and verified examples.

@@ -2,7 +2,7 @@
 
 > Local async state and manual retry for Redux sagas and thunks.
 
-The modern 1.x release uses npm's `next` channel. `latest` remains legacy `0.0.7`.
+The modern 1.x release uses npm's `next` channel. `latest` remains legacy `0.0.8`.
 Install `redux-retry@next` or pin `redux-retry@1.0.1`.
 
 - [Install and API guide](https://raw.githubusercontent.com/nimeshgurung/redux-retry/master/llm.text): Markdown examples, supported versions, API contracts and consumer verification.
