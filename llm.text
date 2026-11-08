@@ -12,7 +12,7 @@ Use the `Retry` render-prop component or the `useRetry` hook. No extra reducers 
 ## Install
 
 Install stable `1.0.1` for the modern component and hook APIs.
-It uses the `next` npm channel during rollout; `latest` remains legacy `0.0.7`.
+It uses the `next` npm channel during rollout; `latest` remains legacy `0.0.8`.
 Use `redux-retry@next` to follow the modern channel, or pin `redux-retry@1.0.1` as below.
 The earlier `1.0.0-beta.1` prerelease remains available for beta consumers.
 Do not install the older `0.0.x` release for the hook API. Check published versions with:

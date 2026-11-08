@@ -17,6 +17,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:compat": "node scripts/compat.mjs",
+    "test:legacy": "node scripts/legacy.mjs",
     "test:live": "playwright test --config playwright.live.config.ts",
     "lint": "eslint src tests scripts *.ts *.mjs",
     "format:check": "prettier --check src tests scripts examples *.ts *.mjs package.json tsconfig.json README.md API.md CHANGELOG.md .github docs/index.html",

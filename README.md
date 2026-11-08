@@ -17,7 +17,9 @@ Choose **Try an error**, then **Retry**, to see recovery.
 
 **1.x** supports React 18/19, React Redux 9, and Redux 5. See [migration notes](CHANGELOG.md).
 The modern 1.x release uses npm's `next` channel for an opt-in rollout. `latest` stays on legacy
-`0.0.7`, so plain `npm install redux-retry` continues to install the older release.
+`0.0.8`, so plain `npm install redux-retry` continues to install the older release.
+
+For the React 16 / Redux 4 release, see the [legacy guide](docs/legacy.md).
 
 ## Install
 
