@@ -137,6 +137,9 @@
         font-family: ui-monospace, monospace;
         font-size: 0.9em;
       }
+      .description + .description {
+        margin-top: 10px;
+      }
       .wordmark {
         display: block;
         width: 240px;
@@ -289,6 +292,10 @@
         <p class="description">
           Use <code>Retry</code> or <code>useRetry</code> to handle loading, success, and errors
           with Redux Saga or Thunk. When a request fails, give users a way to try again.
+        </p>
+        <p class="description">
+          Keep request-scoped loading, error, and retry state local to the calling component,
+          without adding transient UI state to your Redux store.
         </p>
       </section>
       <div class="examples">
